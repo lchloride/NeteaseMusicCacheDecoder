@@ -1,0 +1,25 @@
+{
+  "name": "netease_music_decoder",
+  "version": "3.1.0",
+  "description": "网易云音乐缓存解码器",
+  "main": "main.js",
+  "files": [
+    "single_process.js",
+    "alert.js"
+  ],
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "package": "electron-packager . 'notepad' --platform=darwin --arch=x64  --out=./dist --asar --app-version=1.0.0 --ignore=\"(dist|src|docs|.gitignore|LICENSE|README.md|webpack.config*|node_modules)\"",
+    "packageDarwin": "electron-packager . 'notepad' --platform=darwin --arch=x64  --out=./dist --asar --app-version=1.0.0 --ignore=\"(dist|src|docs|.gitignore|LICENSE|README.md|webpack.config*|node_modules)\"",
+    "packageDarwin2": "electron-packager . 'notepad' --platform=darwin --arch=x64  --out=./dist --asar --app-version=1.0.0",
+    "packageWin": "electron-packager . 'notepad' --platform=win32 --arch=x64  --out=./dist --asar --app-version=1.0.0 --ignore=\"(dist|src|docs|.gitignore|LICENSE|README.md|webpack.config.js|node_modules)\"",
+    "packageWin2": "electron-packager . 'notepad' --platform=win32 --arch=x64  --out=./dist --asar --app-version=1.0.0"
+  },
+  "author": "lchloride",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^5.0.4",
+    "electron-packager": "^13.1.1"
+  }
+}

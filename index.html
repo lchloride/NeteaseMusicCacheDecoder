@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>网易云音乐缓存解码器 v3.1</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script>
+        window.nodeRequire = require;
+        delete window.require;
+        delete window.exports;
+        delete window.module;
+    </script>
+
+    <style>
+        #main {
+            margin: 20px;
+        }
+
+        .tab-pane {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="main">
+        <ul id="myTab" class="nav nav-tabs">
+            <li class="active">
+                <a href="#batch" data-toggle="tab">
+                    批量处理
+                </a>
+            </li>
+            <li><a href="#single" data-toggle="tab">单文件处理</a></li>
+            <li><a href="#about" data-toggle="tab">关于</a></li>
+            <li><a href="#lang" data-toggle="tab">语言</a></li>
+            <li><a href="#quit" data-toggle="tab">退出</a></li>
+
+        </ul>
+        <div id="myTabContent" class="tab-content">
+            <div class="tab-pane fade in active" id="batch">
+                <p>菜鸟教程是一个提供最新的web技术站点，本站免费提供了建站相关的技术文档，帮助广大web技术爱好者快速入门并建立自己的网站。菜鸟先飞早入行——学的不仅是技术，更是梦想。</p>
+            </div>
+            <div class="tab-pane fade" id="single">
+                <form class="form-horizontal" role="form" id="single_form">
+                    <div class="form-group">
+                        <label for="cache_file" class="col-sm-2 control-label">缓存文件</label>
+                        <div class="col-sm-10">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="cache_file" placeholder="请选择缓存文件">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-info" type="button" id="cache_file_selection_btn">
+                                        选择文件
+                                    </button>
+                                </span>
+                            </div><!-- /input-group -->
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="target_dir" class="col-sm-2 control-label">输出目录</label>
+                        <div class="col-sm-10">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="target_dir" placeholder="请选择输出目录">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-info" type="button">选择目录</button>
+                                </span>
+                            </div><!-- /input-group -->
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="target_dir_using_cache">使用缓存目录
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="target_dir" class="col-sm-2 control-label">输出文件名</label>
+                        <div class="col-sm-10">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="target_dir" placeholder="输出文件名">
+                                <span class="input-group-addon">.mp3</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox">自动获取
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-addon">命名规则</span>
+                                <input type="text" class="form-control" id="rename_rule" placeholder="命名规则">
+                            </div>
+                            <span class="text-warning ">如果多首音乐对应同一个名字，后转换的音乐会覆盖掉先前转换的音乐。如果歌曲信息无法获取，将按照默认方式命名。</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <div class="row">
+                                <div class="col-sm-3"><button class="btn btn-default btn-block"
+                                        type="button">歌手名</button></div>
+                                <div class="col-sm-3"><button class="btn btn-default btn-block"
+                                        type="button">歌曲名</button></div>
+                                <div class="col-sm-3"><button class="btn btn-default btn-block"
+                                        type="button">专辑名</button></div>
+                                <div class="col-sm-3"><button class="btn btn-default btn-block"
+                                        type="button">歌曲ID</button></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3"><button class="btn btn-default btn-block"
+                                        type="button">附加名</button></div>
+                                <div class="col-sm-3"><button class="btn btn-default btn-block"
+                                        type="button">发行公司</button></div>
+                                <div class="col-sm-3"><button class="btn btn-default btn-block"
+                                        type="button">曲目ID</button></div>
+                                <div class="col-sm-3"><button class="btn btn-default btn-block"
+                                        type="button">唱片ID</button></div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button class="btn btn-default" id="start_single_process" type="button">开始转换</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="tab-pane fade" id="about">
+                <p>jMeter 是一款开源的测试软件。它是 100% 纯 Java 应用程序，用于负载和性能测试。</p>
+            </div>
+            <div class="tab-pane fade" id="lang">
+                <form role="form">
+                    <div class="form-group">
+                        <label for="lang">语言</label>
+                        <select class="form-control" name="lang">
+                            <option>简体中文</option>
+                            <option>English</option>
+                            <option>日本語</option>
+                        </select>
+
+                    </div>
+                </form>
+            </div>
+            <div class="tab-pane fade" id="quit">
+                <p>jMeter 是一款开源的测试软件。它是 100% 纯 Java 应用程序，用于负载和性能测试。</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+        var path = window.nodeRequire("path");
+        var fs = window.nodeRequire("fs");
+        const { ipcRenderer } = window.nodeRequire("electron");
+        const title = "网易云音乐缓存解码器 v3.1";
+    </script>
+    <script src="./single_process.js"></script>
+    <script src="./alert.js"></script>
+</body>
+
+</html>
