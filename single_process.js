@@ -18,7 +18,7 @@ $("#cache_file_selection_btn").click((e) => {
             $("#cache_file").val(files[0]);
         }
     });
-    
+
 });
 
 /**
@@ -31,10 +31,40 @@ function getSelectedFileByDialog(options, callback) {
     ipcRenderer.send("open-file-dialog", options);
 
     // Get the file list from open dialog and trigger callback
-    ipcRenderer.on('selected-file', (event, files) => {
+    ipcRenderer.once('selected-file', (event, files) => {
         callback(files);
     });
 }
+
+/**
+ * Callback when target_dir selection button clicked
+ * Open dialog for target directory selection
+ */
+$("#target_dir_selection_btn").click((e) => {
+    if (!($("#target_dir_using_cache").is(":checked"))) {
+        getSelectedFileByDialog({
+            properties: ['openDirectory'],
+            title: title,
+            message: '选择目标路径'
+        }, (dirs) => {
+            if (dirs === undefined || dirs === null || dirs.length === 0) {
+                $("#target_dir").val("");
+            } else {
+                $("#target_dir").val(dirs[0]);
+            }
+        });
+    }
+});
+
+$("#target_dir_using_cache").change((e) => {
+    if ($("#target_dir_using_cache").is(":checked")) {
+        $("#target_dir").attr("disabled", "disabled");
+        $("#target_dir_selection_btn").addClass("disabled");
+    } else {
+        $("#target_dir").removeAttr("disabled");
+        $("#target_dir_selection_btn").removeClass("disabled");
+    }
+})
 
 
 /**
