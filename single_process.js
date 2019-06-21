@@ -19,6 +19,11 @@ var musicInfo = undefined;
 
 $(document).ready((event) => {
     $("#rename_rule").val(settings.getSetting('single_rename_rule'));
+    if (process.platform === 'darwin') {
+        $('#default_cache_dir_wrapper').css('display', 'block');
+    } else {
+        $('#default_cache_dir_wrapper').css('display', 'none');
+    }
 });
 
 /**
@@ -31,7 +36,8 @@ $("#cache_file_selection_btn").click((e) => {
             { name: '网易云音乐缓存', extensions: ['uc', 'uc!'] }
         ],
         title: title,
-        message: '选择一个音乐缓存文件'
+        message: '选择一个音乐缓存文件',
+        defaultPath: $("#default_cache_dir").is(":checked") ? replaceAll(settings.getSetting('macOS_default_cache_dir'), '%%Username%%', os.userInfo().username) : ''
     }, (files) => {
         if (files === undefined || files === null || files.length === 0) {
             $("#cache_file").val("");
@@ -39,7 +45,7 @@ $("#cache_file_selection_btn").click((e) => {
             $("#cache_file").val(files[0]);
         }
     });
-
+    // os.userInfo().username
 });
 
 /**
@@ -326,6 +332,4 @@ function processSingleFile(sourceName, destinationName) {
     msgbox.messageBox('音乐转换完成.');
 }
 
-const os = window.nodeRequire("os");
-console.log(os);
 

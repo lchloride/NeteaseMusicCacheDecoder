@@ -12,6 +12,7 @@
         delete window.module;
         var path = window.nodeRequire("path");
         var fs = window.nodeRequire("fs");
+        const os = window.nodeRequire("os");
         const { ipcRenderer } = window.nodeRequire("electron");
         const title = "网易云音乐缓存解码器 v3.1";
     </script>
@@ -60,6 +61,15 @@
                                     </button>
                                 </span>
                             </div><!-- /input-group -->
+                        </div>
+                    </div>
+                    <div class="form-group" style="display: none" id="default_cache_dir_wrapper">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="default_cache_dir" checked >在网易云音乐默认缓存路径下检索(macOS)
+                                </label>
+                            </div>
                         </div>
                     </div>
                     <div class="form-group">
