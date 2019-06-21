@@ -121,6 +121,11 @@ ipcMain.on('get-meta-info', (event, arg) => {
   const { net } = require('electron')
   const request = net.request('http://music.163.com/api/song/detail/?id='+arg+'&ids=['+arg+']');
   var body = '';
+
+  request.on('error', (error) => {
+    console.log(error.message);
+    event.sender.send('get-meta-info-response', error.message);
+  });
   request.on('response', (response) => {
     console.log(`STATUS: ${response.statusCode}`)
     console.log(`HEADERS: ${JSON.stringify(response.headers)}`)
@@ -133,6 +138,7 @@ ipcMain.on('get-meta-info', (event, arg) => {
       event.sender.send('get-meta-info-response', body);
     })
   })
+  
   request.end()
 })
 

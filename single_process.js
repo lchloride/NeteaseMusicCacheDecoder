@@ -95,7 +95,7 @@ $("#target_dir_using_cache").change((e) => {
  */
 $(".rename-rule-btn").click((ev) => {
     var idd = ev.target.id;
-    var placeholder = $("#"+idd).attr("data-placeholder");
+    var placeholder = $("#" + idd).attr("data-placeholder");
     var insertPosition = $("#rename_rule").getCursorPosition();
     var rule = $("#rename_rule").val();
     var newStr = rule.substring(0, insertPosition) + placeholder + rule.substring(insertPosition);
@@ -109,6 +109,22 @@ $("#reset_rename_rule").click((event) => {
     settings.setSetting('single_rename_rule', '%%Singer%% - %%Song%%');
     settings.write();
     $("#rename_rule").val(settings.getSetting('single_rename_rule'));
+});
+
+/**
+ * Naming type: auto / manual
+ * Change the display of naming part
+ */
+$('#auto_obtain_target_filename').change((event) => {
+    if ($('#auto_obtain_target_filename').is(":checked")) {
+        $("#target_filename").attr("disabled", "disabled");
+        $("#rename_rule").removeAttr("disabled");
+        $(".rename-rule-btn").removeClass("disabled");
+    } else {
+        $("#target_filename").removeAttr("disabled");
+        $("#rename_rule").attr("disabled", "disabled");
+        $(".rename-rule-btn").addClass("disabled");
+    }
 });
 
 /**
@@ -128,6 +144,7 @@ $("#start_single_process").click((e) => {
             return;
         }
     }
+
     var targetDir = $("#target_dir").val();
     var isTargetDirUsingCache = $("#target_dir_using_cache").is(":checked");
     if (isTargetDirUsingCache) {
@@ -136,28 +153,154 @@ $("#start_single_process").click((e) => {
         msgbox.errorBox("无效的目标文件路径");
         return;
     }
-    var targetStat = fs.statSync(targetDir);
-    if (!sourceStat.isDirectory()) {
+    var targetDirStat = fs.statSync(targetDir);
+    if (!targetDirStat.isDirectory()) {
         msgbox.errorBox("目标文件路径不是合法的路径");
         return;
     }
-})
 
-$('#auto_obtain_target_filename').change((event) => {
-    if ($('#auto_obtain_target_filename').is(":checked")) {
-        $("#target_filename").attr("disabled", "disabled");
-        $("#rename_rule").removeAttr("disabled");
-        $(".rename-rule-btn").removeClass("disabled");
+    var target_filename = "";
+    // Auto renamimg
+    if ($("#auto_obtain_target_filename").is(":checked")) {
+        var rule = $("#rename_rule").val();
+        var musicId = 0;
+        if (sourceName.includes('-')) {
+            var sn = sourceName.substring(sourceName.lastIndexOf(path.sep)+1);
+            musicId = parseInt(sn.substring(0, sn.indexOf('-')));
+            if (isNaN(musicId)) {
+                msgbox.errorBox("无法获取音乐ID.");
+                return;
+            }
+            
+            target_filename = getMusicNameByRule(musicId, rule, sourceName, targetDir);
+            if (target_filename === null) {
+                // Auto renaming processing is at callback of ipcRender
+                return;
+            }
+        } else {
+            msgbox.errorBox("无法获取音乐ID，将使用原先的名称作为目标音乐名.");
+            target_filename = sourceName.substring(sourceName.lastIndexOf(path.sep) + 1, sourceName.lastIndexOf("."));
+        }
+
     } else {
-        $("#target_filename").removeAttr("disabled");
-        $("#rename_rule").attr("disabled", "disabled");
-        $(".rename-rule-btn").addClass("disabled");
+        target_filename = $("#target_filename").val();
     }
-});
+    console.log("target_filename=" + target_filename);
+    if (target_filename === null || target_filename === undefined || target_filename.length === 0) {
+        msgbox.errorBox("目标音乐名为空.");
+        return;
+    } else if (target_filename.includes(path.sep)) {
+        msgbox.errorBox("目标音乐名包含非法字符.");
+        return;
+    }
+    processSingleFile(sourceName, targetDir + (targetDir.endsWith(path.sep) ? '' : path.sep) + target_filename+".mp3");
 
-ipcRenderer.on('get-meta-info-response', (event, arg) => {
-    console.log(JSON.parse(arg));
 })
+
+/**
+ * Obtain music name by specific rule
+ * @param {String} rule 
+ */
+function getMusicNameByRule(musicId, rule, sourceName, targetDir) {
+    if (rule === undefined || rule === null || rule.length === 0) {
+        msgbox.errorBox("命名规则为空");
+        return '';
+    }
+    if (!rule.includes('%%')) {
+        return rule;
+    }
+    ipcRenderer.send('get-meta-info', musicId);
+
+    /**
+     * Receive music meta info
+     */
+    ipcRenderer.once('get-meta-info-response', (event, arg) => {
+        console.log(arg);
+        if (arg === 'net::ERR_INTERNET_DISCONNECTED') {
+            msgbox.errorBox('网络无法连接');
+        } else if (arg.startsWith('net')) {
+            msgbox.errorBox('网络错误:' + arg);
+        } else {
+            // 获取成功，调用解析器
+            parseMusicInfo(arg, rule, sourceName, targetDir);
+        }
+
+    })
+
+    return null;
+}
+
+
+
+function parseMusicInfo(response, rule, sourceName, targetDir) {
+    try {
+        var responseObj = JSON.parse(response);
+    } catch (e) {
+        msgbox.errorBox('无法解析音乐信息.')
+        return;
+    }
+    if (responseObj.code !== 200 || responseObj.songs.length === 0) {
+        msgbox.errorBox('无法获取音乐信息.');
+        return;
+    }
+    var info = responseObj['songs'][0];
+    var targetFilename = rule;
+
+    // Artists replacement
+    var artists = '';
+    var i = 0;
+    if (info["artists"] !== undefined && info["artists"] !== null && info['artists'].length > 0) {
+        for (i=0; i<info['artists'].length; i++) {
+            artists += info['artists'][i]['name'] + ",";
+        }
+        artists = artists.substring(0, artists.length-1);
+        targetFilename = replaceAll(targetFilename, '%%Artists%%', artists);
+    }
+    // Song replacement
+    targetFilename = replaceAll(targetFilename, '%%Song%%', (info['name'] !== undefined && info['name'] !== null) ? info['name'] : '');
+    // Album replacement
+    try {
+        targetFilename = replaceAll(targetFilename, '%%Album%%', info['album']['name']);
+    } catch (e) {}
+    // MusicId replacement
+    targetFilename = replaceAll(targetFilename, '%%MusicID%%', info['id']);
+    // Alias replacement
+    var alias = '';
+    if (info['alias'] !== undefined && info['alias'] !== null && info['alias'].length > 0) {
+        for (i=0; i<info['alias'].length; i++) {
+            alias += info['alias'][i] + ",";
+        }
+        alias = alias.substring(0, alias.length-1);
+        targetFilename = replaceAll(targetFilename, '%%Alias%%', '('+alias+')');
+    }
+    // Company repalcement
+    try {
+    targetFilename = replaceAll(targetFilename, '%%Company%%', info['album']['company']);
+    } catch (e) {}
+    // Track replacement
+    targetFilename = replaceAll(targetFilename, '%%Track%%', info['no']);
+    // Disc replacement
+    targetFilename = replaceAll(targetFilename, '%%Disc%%', info['disc'].includes('/') ? info['disc'].substring(0, info['disc'].indexOf('/')) : info['disc']);
+
+    console.log(targetFilename, 'artists='+artists, 'song='+info['name'], 'album='+info['album']['name'], 'musicId='+info['id'], 'alias='+alias, 
+        'company='+info['album']['company'], 'track='+info['no'], 
+        'disc='+info['disc'].includes('/') ? info['disc'].substring(0, info['disc'].indexOf('/')) : info['disc']);
+
+    processSingleFile(sourceName, targetDir + (targetDir.endsWith(path.sep) ? '' : path.sep) + targetFilename+".mp3");
+}
+
+function replaceAll(str, before, after) {
+    if (before === after) {
+        return str;
+    }
+    while (str.includes(before)) {
+        str = str.replace(before, after);
+    }
+    return str;
+}
+
+
+
 /**
  * Parse single cache file.
  * This function can be reused on batch processing
@@ -169,6 +312,7 @@ function processSingleFile(sourceName, destinationName) {
         data = fs.readFileSync(sourceName);
     } catch (e) {
         msgbox.errorBox("读取音乐缓存文件出错:" + e.message);
+        return;
     }
     for (var i = 0; i < data.length; i++) {
         data[i] = data[i] ^ 0xA3;
@@ -177,16 +321,11 @@ function processSingleFile(sourceName, destinationName) {
         fs.writeFileSync(destinationName, data);
     } catch (e) {
         msgbox.errorBox("写入音乐文件出错:" + e.message);
+        return;
     }
-
+    msgbox.messageBox('音乐转换完成.');
 }
 
-/**
- * Obtain music name by specific rule
- * @param {String} sourceName 
- * @param {String} rule 
- */
-function getMusicNameByRule(sourceName, rule) {
-
-}
+const os = window.nodeRequire("os");
+console.log(os);
 
