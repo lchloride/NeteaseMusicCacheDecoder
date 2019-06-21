@@ -63,3 +63,6 @@ typings/
 # vscode
 .vscode/
 *.code-workspace
+
+# macOS
+.DS_Store

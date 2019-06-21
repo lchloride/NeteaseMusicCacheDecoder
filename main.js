@@ -116,3 +116,23 @@ ipcMain.on('open-file-dialog', (event, options) => {
         }
     });
 });
+
+ipcMain.on('get-meta-info', (event, arg) => {
+  const { net } = require('electron')
+  const request = net.request('http://music.163.com/api/song/detail/?id='+arg+'&ids=['+arg+']');
+  var body = '';
+  request.on('response', (response) => {
+    console.log(`STATUS: ${response.statusCode}`)
+    console.log(`HEADERS: ${JSON.stringify(response.headers)}`)
+    response.on('data', (chunk) => {
+      console.log(`BODY: ${chunk}`);
+      body += chunk;
+    })
+    response.on('end', () => {
+      console.log('No more data in response.');
+      event.sender.send('get-meta-info-response', body);
+    })
+  })
+  request.end()
+})
+

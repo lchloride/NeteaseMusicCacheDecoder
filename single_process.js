@@ -1,5 +1,26 @@
 var musicInfo = undefined;
 
+(function ($, undefined) {
+    $.fn.getCursorPosition = function () {
+        var el = $(this).get(0);
+        var pos = 0;
+        if ('selectionStart' in el) {
+            pos = el.selectionStart;
+        } else if ('selection' in document) {
+            el.focus();
+            var Sel = document.selection.createRange();
+            var SelLength = document.selection.createRange().text.length;
+            Sel.moveStart('character', -el.value.length);
+            pos = Sel.text.length - SelLength;
+        }
+        return pos;
+    }
+})(jQuery);
+
+$(document).ready((event) => {
+    $("#rename_rule").val(settings.getSetting('single_rename_rule'));
+});
+
 /**
  * Callback when select source file
  */
@@ -56,6 +77,9 @@ $("#target_dir_selection_btn").click((e) => {
     }
 });
 
+/**
+ * Callback on auto-renaming, re-enable/disable some feature
+ */
 $("#target_dir_using_cache").change((e) => {
     if ($("#target_dir_using_cache").is(":checked")) {
         $("#target_dir").attr("disabled", "disabled");
@@ -64,8 +88,28 @@ $("#target_dir_using_cache").change((e) => {
         $("#target_dir").removeAttr("disabled");
         $("#target_dir_selection_btn").removeClass("disabled");
     }
-})
+});
 
+/**
+ * Modify renaming rule when rule-btn clicked
+ */
+$(".rename-rule-btn").click((ev) => {
+    var idd = ev.target.id;
+    var placeholder = $("#"+idd).attr("data-placeholder");
+    var insertPosition = $("#rename_rule").getCursorPosition();
+    var rule = $("#rename_rule").val();
+    var newStr = rule.substring(0, insertPosition) + placeholder + rule.substring(insertPosition);
+    $("#rename_rule").val(newStr);
+});
+
+/**
+ * Callback when resetting renaming rule
+ */
+$("#reset_rename_rule").click((event) => {
+    settings.setSetting('single_rename_rule', '%%Singer%% - %%Song%%');
+    settings.write();
+    $("#rename_rule").val(settings.getSetting('single_rename_rule'));
+});
 
 /**
  * Callback when start_single_process clicked.
@@ -99,6 +143,21 @@ $("#start_single_process").click((e) => {
     }
 })
 
+$('#auto_obtain_target_filename').change((event) => {
+    if ($('#auto_obtain_target_filename').is(":checked")) {
+        $("#target_filename").attr("disabled", "disabled");
+        $("#rename_rule").removeAttr("disabled");
+        $(".rename-rule-btn").removeClass("disabled");
+    } else {
+        $("#target_filename").removeAttr("disabled");
+        $("#rename_rule").attr("disabled", "disabled");
+        $(".rename-rule-btn").addClass("disabled");
+    }
+});
+
+ipcRenderer.on('get-meta-info-response', (event, arg) => {
+    console.log(JSON.parse(arg));
+})
 /**
  * Parse single cache file.
  * This function can be reused on batch processing

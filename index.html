@@ -10,7 +10,12 @@
         delete window.require;
         delete window.exports;
         delete window.module;
+        var path = window.nodeRequire("path");
+        var fs = window.nodeRequire("fs");
+        const { ipcRenderer } = window.nodeRequire("electron");
+        const title = "网易云音乐缓存解码器 v3.1";
     </script>
+    <script src="./settings.js"></script>
 
     <style>
         #main {
@@ -63,7 +68,8 @@
                             <div class="input-group">
                                 <input type="text" class="form-control" id="target_dir" placeholder="请选择输出目录">
                                 <span class="input-group-btn">
-                                    <button class="btn btn-info" type="button" id="target_dir_selection_btn">选择目录</button>
+                                    <button class="btn btn-info" type="button"
+                                        id="target_dir_selection_btn">选择目录</button>
                                 </span>
                             </div><!-- /input-group -->
                         </div>
@@ -78,10 +84,11 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="target_dir" class="col-sm-2 control-label">输出文件名</label>
+                        <label for="target_filename" class="col-sm-2 control-label">输出文件名</label>
                         <div class="col-sm-10">
                             <div class="input-group">
-                                <input type="text" class="form-control" id="target_dir" placeholder="输出文件名">
+                                <input type="text" class="form-control" id="target_filename" placeholder="输出文件名"
+                                    disabled>
                                 <span class="input-group-addon">.mp3</span>
                             </div>
                         </div>
@@ -90,7 +97,7 @@
                         <div class="col-sm-offset-2 col-sm-10">
                             <div class="checkbox">
                                 <label>
-                                    <input type="checkbox">自动获取
+                                    <input type="checkbox" id="auto_obtain_target_filename" checked>自动获取
                                 </label>
                             </div>
                         </div>
@@ -100,6 +107,11 @@
                             <div class="input-group">
                                 <span class="input-group-addon">命名规则</span>
                                 <input type="text" class="form-control" id="rename_rule" placeholder="命名规则">
+                                <span class="input-group-addon">.mp3</span>
+                                <span class="input-group-btn">
+                                    <button class="btn btn-info" type="button"
+                                        id="reset_rename_rule">重置</button>
+                                </span>
                             </div>
                             <span class="text-warning ">如果多首音乐对应同一个名字，后转换的音乐会覆盖掉先前转换的音乐。如果歌曲信息无法获取，将按照默认方式命名。</span>
                         </div>
@@ -107,24 +119,24 @@
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10">
                             <div class="row">
-                                <div class="col-sm-3"><button class="btn btn-default btn-block"
-                                        type="button">歌手名</button></div>
-                                <div class="col-sm-3"><button class="btn btn-default btn-block"
-                                        type="button">歌曲名</button></div>
-                                <div class="col-sm-3"><button class="btn btn-default btn-block"
-                                        type="button">专辑名</button></div>
-                                <div class="col-sm-3"><button class="btn btn-default btn-block"
-                                        type="button">歌曲ID</button></div>
+                                <div class="col-sm-3"><button class="btn btn-default btn-block rename-rule-btn"
+                                        type="button" id="singer_single" data-placeholder="%%Singer%%">歌手名</button></div>
+                                <div class="col-sm-3"><button class="btn btn-default btn-block rename-rule-btn"
+                                        type="button" id="song_single" data-placeholder="%%Sone%%">歌曲名</button></div>
+                                <div class="col-sm-3"><button class="btn btn-default btn-block rename-rule-btn"
+                                        type="button" id="album_single" data-placeholder="%%Album%%">专辑名</button></div>
+                                <div class="col-sm-3"><button class="btn btn-default btn-block rename-rule-btn"
+                                        type="button" id="musicid_single" data-placeholder="%%MusicID%%">歌曲ID</button></div>
                             </div>
                             <div class="row">
-                                <div class="col-sm-3"><button class="btn btn-default btn-block"
-                                        type="button">附加名</button></div>
-                                <div class="col-sm-3"><button class="btn btn-default btn-block"
-                                        type="button">发行公司</button></div>
-                                <div class="col-sm-3"><button class="btn btn-default btn-block"
-                                        type="button">曲目ID</button></div>
-                                <div class="col-sm-3"><button class="btn btn-default btn-block"
-                                        type="button">唱片ID</button></div>
+                                <div class="col-sm-3"><button class="btn btn-default btn-block rename-rule-btn"
+                                        type="button" id="alias_single" data-placeholder="%%Alias%%">附加名</button></div>
+                                <div class="col-sm-3"><button class="btn btn-default btn-block rename-rule-btn"
+                                        type="button" id="company_single" data-placeholder="%%Company%%">发行公司</button></div>
+                                <div class="col-sm-3"><button class="btn btn-default btn-block rename-rule-btn"
+                                        type="button" id="track_single" data-placeholder="%%Track%%">曲目ID</button></div>
+                                <div class="col-sm-3"><button class="btn btn-default btn-block rename-rule-btn"
+                                        type="button" id="disc_single" data-placeholder="%%Disc%%">唱片ID</button></div>
                             </div>
                         </div>
 
@@ -162,14 +174,9 @@
 
     <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script>
-        var path = window.nodeRequire("path");
-        var fs = window.nodeRequire("fs");
-        const { ipcRenderer } = window.nodeRequire("electron");
-        const title = "网易云音乐缓存解码器 v3.1";
-    </script>
     <script src="./single_process.js"></script>
     <script src="./alert.js"></script>
+
 </body>
 
 </html>
