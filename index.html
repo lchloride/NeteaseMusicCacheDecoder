@@ -67,7 +67,7 @@
                         <div class="col-sm-offset-2 col-sm-10">
                             <div class="checkbox">
                                 <label>
-                                    <input type="checkbox" id="default_cache_dir" checked >在网易云音乐默认缓存路径下检索(macOS)
+                                    <input type="checkbox" id="default_cache_dir" checked>在网易云音乐默认缓存路径下检索(macOS)
                                 </label>
                             </div>
                         </div>
@@ -119,8 +119,7 @@
                                 <input type="text" class="form-control" id="rename_rule" placeholder="命名规则">
                                 <span class="input-group-addon">.mp3</span>
                                 <span class="input-group-btn">
-                                    <button class="btn btn-info" type="button"
-                                        id="reset_rename_rule">重置</button>
+                                    <button class="btn btn-info" type="button" id="reset_rename_rule">重置</button>
                                 </span>
                             </div>
                             <span class="text-warning ">如果多首音乐对应同一个名字，后转换的音乐会覆盖掉先前转换的音乐。如果歌曲信息无法获取，将按照默认方式命名。</span>
@@ -130,19 +129,22 @@
                         <div class="col-sm-offset-2 col-sm-10">
                             <div class="row">
                                 <div class="col-sm-3"><button class="btn btn-default btn-block rename-rule-btn"
-                                        type="button" id="singer_single" data-placeholder="%%Artists%%">歌手名</button></div>
+                                        type="button" id="singer_single" data-placeholder="%%Artists%%">歌手名</button>
+                                </div>
                                 <div class="col-sm-3"><button class="btn btn-default btn-block rename-rule-btn"
                                         type="button" id="song_single" data-placeholder="%%Song%%">歌曲名</button></div>
                                 <div class="col-sm-3"><button class="btn btn-default btn-block rename-rule-btn"
                                         type="button" id="album_single" data-placeholder="%%Album%%">专辑名</button></div>
                                 <div class="col-sm-3"><button class="btn btn-default btn-block rename-rule-btn"
-                                        type="button" id="musicid_single" data-placeholder="%%MusicID%%">歌曲ID</button></div>
+                                        type="button" id="musicid_single" data-placeholder="%%MusicID%%">歌曲ID</button>
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-sm-3"><button class="btn btn-default btn-block rename-rule-btn"
                                         type="button" id="alias_single" data-placeholder="%%Alias%%">附加名</button></div>
                                 <div class="col-sm-3"><button class="btn btn-default btn-block rename-rule-btn"
-                                        type="button" id="company_single" data-placeholder="%%Company%%">发行公司</button></div>
+                                        type="button" id="company_single" data-placeholder="%%Company%%">发行公司</button>
+                                </div>
                                 <div class="col-sm-3"><button class="btn btn-default btn-block rename-rule-btn"
                                         type="button" id="track_single" data-placeholder="%%Track%%">曲目ID</button></div>
                                 <div class="col-sm-3"><button class="btn btn-default btn-block rename-rule-btn"
@@ -160,7 +162,19 @@
                 </form>
             </div>
             <div class="tab-pane fade" id="about">
-                <p>jMeter 是一款开源的测试软件。它是 100% 纯 Java 应用程序，用于负载和性能测试。</p>
+                <div class="media">
+                    <div class="media-left">
+                        <img src="./163MusicCacheDecoder.png" class="media-object" style="width:60px">
+                    </div>
+                    <div class="media-body">
+                        <h4 class="media-heading">网易云音乐缓存解码器 Netease Music Cache Decoder v3.1</h4>
+                        <p>Github: https://github.com/lchloride/NeteaseMusicCacheDecoder
+                        </p>
+                        <p>Copyright @ lchloride, 2017-2019, MIT License</p>
+                        <p>Built by Electron with Node.js</p>
+                    </div>
+                </div>
+
             </div>
             <div class="tab-pane fade" id="lang">
                 <form role="form">
@@ -176,7 +190,6 @@
                 </form>
             </div>
             <div class="tab-pane fade" id="quit">
-                <p>jMeter 是一款开源的测试软件。它是 100% 纯 Java 应用程序，用于负载和性能测试。</p>
             </div>
         </div>
 
