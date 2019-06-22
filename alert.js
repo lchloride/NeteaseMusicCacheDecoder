@@ -10,3 +10,15 @@ var msgbox = {
         ipcRenderer.send('open-warn-dialog', msg);
     }
 };
+
+var logger = {
+    info: function(content, type, handler) {
+        if (type === 'dialog') {
+            msgbox.messageBox(content);
+        } else if (type === 'custom') {
+            handler(content);
+        } else if (type === 'batch') {
+            $('#')
+        }
+    }
+}

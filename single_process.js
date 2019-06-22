@@ -53,7 +53,10 @@ $("#cache_file_selection_btn").click((e) => {
  * @param {Object} options options for open dialog
  * @param {Function} callback do something when file list is back
  */
+var dialogLock = 0;
 function getSelectedFileByDialog(options, callback) {
+    ipcRenderer.removeAllListeners('selected-file');
+    
     // notify main thread to open file dialog
     ipcRenderer.send("open-file-dialog", options);
 
@@ -101,10 +104,15 @@ $("#target_dir_using_cache").change((e) => {
  */
 $(".rename-rule-btn").click((ev) => {
     var idd = ev.target.id;
+    if ($("#" + idd)[0].className.includes('disabled')) {
+        return;
+    }
     var placeholder = $("#" + idd).attr("data-placeholder");
     var insertPosition = $("#rename_rule").getCursorPosition();
     var rule = $("#rename_rule").val();
     var newStr = rule.substring(0, insertPosition) + placeholder + rule.substring(insertPosition);
+    settings.setSetting('single_rename_rule', newStr);
+    settings.write();
     $("#rename_rule").val(newStr);
 });
 
@@ -112,7 +120,7 @@ $(".rename-rule-btn").click((ev) => {
  * Callback when resetting renaming rule
  */
 $("#reset_rename_rule").click((event) => {
-    settings.setSetting('single_rename_rule', '%%Singer%% - %%Song%%');
+    settings.setSetting('single_rename_rule', '%%Artists%% - %%Song%%');
     settings.write();
     $("#rename_rule").val(settings.getSetting('single_rename_rule'));
 });

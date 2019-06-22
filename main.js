@@ -113,6 +113,8 @@ ipcMain.on('open-file-dialog', (event, options) => {
     dialog.showOpenDialog(options, (file) => {
         if (file) {
             event.sender.send('selected-file', file);
+        } else {
+            event.sender.send('selected-file', []);
         }
     });
 });

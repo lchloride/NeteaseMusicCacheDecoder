@@ -47,7 +47,131 @@
         </ul>
         <div id="myTabContent" class="tab-content">
             <div class="tab-pane fade in active" id="batch">
-                <p>菜鸟教程是一个提供最新的web技术站点，本站免费提供了建站相关的技术文档，帮助广大web技术爱好者快速入门并建立自己的网站。菜鸟先飞早入行——学的不仅是技术，更是梦想。</p>
+                <form class="form-horizontal" role="form" id="batch_form">
+                    <div class="form-group">
+                        <label for="bcache_dir" class="col-sm-2 control-label">缓存目录</label>
+                        <div class="col-sm-10">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="bcache_dir" placeholder="请选择缓存目录">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-info" type="button" id="bcache_dir_selection_btn">
+                                        选择目录
+                                    </button>
+                                </span>
+                            </div><!-- /input-group -->
+                        </div>
+                    </div>
+                    <div class="form-group" style="display: none" id="bdefault_cache_dir_wrapper">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="bdefault_cache_dir" checked>在网易云音乐默认缓存路径下检索(macOS)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="btarget_dir" class="col-sm-2 control-label">输出目录</label>
+                        <div class="col-sm-10">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="btarget_dir" placeholder="请选择输出目录">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-info" type="button"
+                                        id="btarget_dir_selection_btn">选择目录</button>
+                                </span>
+                            </div><!-- /input-group -->
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="btarget_dir_using_cache">使用缓存目录
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="bauto_obtain_target_filename" class="col-sm-2 control-label">输出文件名</label>
+                        <div class="col-sm-10">
+                            <div class="input-group">
+                                <div class="radio" style="margin-left: 0px;">
+                                    <label>
+                                        <input type="radio" name="target_filename" id="brename_by_source" value="source"> 依照缓存文件名
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="target_filename" id="bauto_obtain_target_filename" value="auto" checked>自动获取
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                        
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-addon">命名规则</span>
+                                <input type="text" class="form-control" id="brename_rule" placeholder="命名规则">
+                                <span class="input-group-addon">.mp3</span>
+                                <span class="input-group-btn">
+                                    <button class="btn btn-info" type="button" id="breset_rename_rule">重置</button>
+                                </span>
+                            </div>
+                            <span class="text-warning ">如果多首音乐对应同一个名字，后转换的音乐会覆盖掉先前转换的音乐。如果歌曲信息无法获取，将按照原文件名命名。</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <div class="row">
+                                <div class="col-sm-3"><button class="btn btn-default btn-block brename-rule-btn"
+                                        type="button" id="bsinger_single" data-placeholder="%%Artists%%">歌手名</button>
+                                </div>
+                                <div class="col-sm-3"><button class="btn btn-default btn-block brename-rule-btn"
+                                        type="button" id="bsong_single" data-placeholder="%%Song%%">歌曲名</button></div>
+                                <div class="col-sm-3"><button class="btn btn-default btn-block brename-rule-btn"
+                                        type="button" id="balbum_single" data-placeholder="%%Album%%">专辑名</button></div>
+                                <div class="col-sm-3"><button class="btn btn-default btn-block brename-rule-btn"
+                                        type="button" id="bmusicid_single" data-placeholder="%%MusicID%%">歌曲ID</button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3"><button class="btn btn-default btn-block brename-rule-btn"
+                                        type="button" id="balias_single" data-placeholder="%%Alias%%">附加名</button></div>
+                                <div class="col-sm-3"><button class="btn btn-default btn-block brename-rule-btn"
+                                        type="button" id="bcompany_single" data-placeholder="%%Company%%">发行公司</button>
+                                </div>
+                                <div class="col-sm-3"><button class="btn btn-default btn-block brename-rule-btn"
+                                        type="button" id="btrack_single" data-placeholder="%%Track%%">曲目ID</button></div>
+                                <div class="col-sm-3"><button class="btn btn-default btn-block brename-rule-btn"
+                                        type="button" id="bdisc_single" data-placeholder="%%Disc%%">唱片ID</button></div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button class="btn btn-default" id="bstart_batch_process" type="button">开始转换</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bstatus" class="col-sm-2 control-label">执行记录</label>
+                        <div class="col-sm-10">
+                            <div class="input-group" style="width: 100%">
+                                <textarea class="form-control" rows="5" id="bstatus" disabled>adsfasd</textarea>
+                            </div><!-- /input-group -->
+                        </div>
+                    </div>
+                </form>
             </div>
             <div class="tab-pane fade" id="single">
                 <form class="form-horizontal" role="form" id="single_form">
@@ -183,8 +307,8 @@
                         <label for="lang">语言</label>
                         <select class="form-control" name="lang">
                             <option>简体中文</option>
-                            <option>English</option>
-                            <option>日本語</option>
+                            <!-- <option>English</option>
+                            <option>日本語</option> -->
                         </select>
 
                     </div>
@@ -199,6 +323,7 @@
     <script src="./jquery.min.js"></script>
     <script src="./bootstrap.min.js"></script>
     <script src="./single_process.js"></script>
+    <script src="./batch_process.js"></script>
 
 </body>
 
