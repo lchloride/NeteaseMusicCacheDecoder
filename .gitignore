@@ -64,5 +64,15 @@ typings/
 .vscode/
 *.code-workspace
 
+# dist
+dist/
+
 # macOS
 .DS_Store
+
+# Netease Music files
+*.info
+*.idx
+*.uc
+*.uc!
+*.mp3
