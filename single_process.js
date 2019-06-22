@@ -296,7 +296,7 @@ function parseMusicInfo(response, rule, sourceName, targetDir) {
 }
 
 function replaceAll(str, before, after) {
-    if (before === after) {
+    if (str === undefined || str === null || before === after) {
         return str;
     }
     while (str.includes(before)) {

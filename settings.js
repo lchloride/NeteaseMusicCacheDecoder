@@ -1,8 +1,9 @@
 var settings = {
     settings: {},
+    p: process.execPath.substring(0, process.execPath.indexOf('netease_music_decoder.app')),
     load: function () {
         try {
-            var data = fs.readFileSync('./settings.json', { encoding: 'utf-8' });
+            var data = fs.readFileSync(this.p+'settings.json', { encoding: 'utf-8' });
         } catch (e) {
             msgbox.errorBox("读取配置文件出错:" + e.message);
             return;
@@ -26,7 +27,7 @@ var settings = {
             return;
         }
         try {
-            fs.writeFileSync('./settings.json', JSON.stringify(this.settings), { encoding: 'utf-8' });
+            fs.writeFileSync(this.p+'settings.json', JSON.stringify(this.settings), { encoding: 'utf-8' });
         } catch (e) {
             msgbox.errorBox("读取配置文件出错:" + e.message);
             return;

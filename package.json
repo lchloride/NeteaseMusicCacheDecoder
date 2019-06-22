@@ -10,11 +10,11 @@
   "scripts": {
     "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "package": "electron-packager . 'notepad' --platform=darwin --arch=x64  --out=./dist --asar --app-version=1.0.0 --ignore=\"(dist|src|docs|.gitignore|LICENSE|README.md|webpack.config*|node_modules)\"",
-    "packageDarwin": "electron-packager . 'notepad' --platform=darwin --arch=x64  --out=./dist --asar --app-version=1.0.0 --ignore=\"(dist|src|docs|.gitignore|LICENSE|README.md|webpack.config*|node_modules)\"",
-    "packageDarwin2": "electron-packager . 'notepad' --platform=darwin --arch=x64  --out=./dist --asar --app-version=1.0.0",
-    "packageWin": "electron-packager . 'notepad' --platform=win32 --arch=x64  --out=./dist --asar --app-version=1.0.0 --ignore=\"(dist|src|docs|.gitignore|LICENSE|README.md|webpack.config.js|node_modules)\"",
-    "packageWin2": "electron-packager . 'notepad' --platform=win32 --arch=x64  --out=./dist --asar --app-version=1.0.0"
+    "package": "electron-packager . 'netease_music_decoder' --platform=darwin --arch=x64 --icon=163MusicCacheDecoder.icns --out=./dist --asar --app-version=1.0.0 --ignore=\"(dist|src|docs|.gitignore|LICENSE|README.md|webpack.config*|node_modules)\"",
+    "packageDarwin": "electron-packager . 'netease_music_decoder' --platform=darwin --arch=x64 --icon=163MusicCacheDecoder.icns --out=./dist --asar --app-version=1.0.0 --ignore=\"(dist|src|docs|.gitignore|LICENSE|README.md|webpack.config*|node_modules)\" --overwrite",
+    "packageDarwin2": "electron-packager . 'netease_music_decoder' --platform=darwin --arch=x64 --icon=163MusicCacheDecoder.icns --out=./dist --asar --app-version=1.0.0",
+    "packageWin": "electron-packager . 'netease_music_decoder' --platform=win32 --arch=x64  --out=./dist --asar --app-version=1.0.0 --ignore=\"(dist|src|docs|.gitignore|LICENSE|README.md|webpack.config.js|node_modules)\"",
+    "packageWin2": "electron-packager . 'netease_music_decoder' --platform=win32 --arch=x64  --out=./dist --asar --app-version=1.0.0"
   },
   "author": "lchloride",
   "license": "MIT",
