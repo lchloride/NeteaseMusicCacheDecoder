@@ -182,7 +182,7 @@ $("#start_single_process").click((e) => {
             var sn = sourceName.substring(sourceName.lastIndexOf(path.sep)+1);
             musicId = parseInt(sn.substring(0, sn.indexOf('-')));
             if (isNaN(musicId)) {
-                msgbox.errorBox("无法获取音乐ID.");
+                msgbox.errorBox("无法从缓存文件名中获取音乐ID.");
                 return;
             }
             
