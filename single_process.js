@@ -215,9 +215,9 @@ $("#start_single_process").click((e) => {
  * Obtain music name by specific rule
  * @param {String} rule 
  */
-function getMusicNameByRule(musicId, rule, sourceName, targetDir) {
+function getMusicNameByRule(musicId, rule, sourceName, targetDir, type) {
     if (rule === undefined || rule === null || rule.length === 0) {
-        msgbox.errorBox("命名规则为空");
+        logger.error("命名规则为空", type);
         return '';
     }
     if (!rule.includes('%%')) {
@@ -228,15 +228,15 @@ function getMusicNameByRule(musicId, rule, sourceName, targetDir) {
     /**
      * Receive music meta info
      */
-    ipcRenderer.once('get-meta-info-response', (event, arg) => {
+    ipcRenderer.once('get-meta-info-response-'+musicId, (event, arg) => {
         console.log(arg);
         if (arg === 'net::ERR_INTERNET_DISCONNECTED') {
-            msgbox.errorBox('网络无法连接');
+            logger.error('网络无法连接', type);
         } else if (arg.startsWith('net')) {
-            msgbox.errorBox('网络错误:' + arg);
+            logger.error('网络错误:' + arg, type);
         } else {
             // 获取成功，调用解析器
-            parseMusicInfo(arg, rule, sourceName, targetDir);
+            parseMusicInfo(arg, rule, sourceName, targetDir, type);
         }
 
     })
@@ -246,15 +246,15 @@ function getMusicNameByRule(musicId, rule, sourceName, targetDir) {
 
 
 
-function parseMusicInfo(response, rule, sourceName, targetDir) {
+function parseMusicInfo(response, rule, sourceName, targetDir, type) {
     try {
         var responseObj = JSON.parse(response);
     } catch (e) {
-        msgbox.errorBox('无法解析音乐信息.')
+        logger.error('无法解析音乐信息.', type)
         return;
     }
     if (responseObj.code !== 200 || responseObj.songs.length === 0) {
-        msgbox.errorBox('无法获取音乐信息.');
+        logger.error('无法获取音乐信息.', type);
         return;
     }
     var info = responseObj['songs'][0];
@@ -299,8 +299,11 @@ function parseMusicInfo(response, rule, sourceName, targetDir) {
     console.log(targetFilename, 'artists='+artists, 'song='+info['name'], 'album='+info['album']['name'], 'musicId='+info['id'], 'alias='+alias, 
         'company='+info['album']['company'], 'track='+info['no'], 
         'disc='+info['disc'].includes('/') ? info['disc'].substring(0, info['disc'].indexOf('/')) : info['disc']);
+    if (type === 'batch') {
+        logger.info('获取到的音乐名:'+targetFilename+"("+getFilenameFromFullPath(sourceName)+")", type);
+    }
 
-    processSingleFile(sourceName, targetDir + (targetDir.endsWith(path.sep) ? '' : path.sep) + targetFilename+".mp3");
+    processSingleFile(sourceName, targetDir + (targetDir.endsWith(path.sep) ? '' : path.sep) + targetFilename+".mp3", type);
 }
 
 function replaceAll(str, before, after) {
@@ -320,12 +323,12 @@ function replaceAll(str, before, after) {
  * This function can be reused on batch processing
  * @param {String} filename 
  */
-function processSingleFile(sourceName, destinationName) {
+function processSingleFile(sourceName, destinationName, type) {
     var data;
     try {
         data = fs.readFileSync(sourceName);
     } catch (e) {
-        msgbox.errorBox("读取音乐缓存文件出错:" + e.message);
+        logger.error("读取音乐缓存文件出错:"+e.message, type);
         return;
     }
     for (var i = 0; i < data.length; i++) {
@@ -334,10 +337,17 @@ function processSingleFile(sourceName, destinationName) {
     try {
         fs.writeFileSync(destinationName, data);
     } catch (e) {
-        msgbox.errorBox("写入音乐文件出错:" + e.message);
+        logger.error("写入音乐文件出错:" + e.message, type);
         return;
     }
-    msgbox.messageBox('音乐转换完成.');
+    logger.primary('音乐转换完成.('+getFilenameFromFullPath(sourceName)+" --> "+getFilenameFromFullPath(destinationName)+")", type);
+}
+
+function getFilenameFromFullPath(ppath) {
+    if (ppath === undefined || ppath === null || ppath.length === 0)
+        return ppath;
+    else
+        return ppath.substring(ppath.lastIndexOf(path.sep)+1);
 }
 
 

@@ -159,46 +159,45 @@ $("#bstart_batch_process").click((e) => {
     sourceNameList = getFilesInDir(sourceDir);
 
     for (var i = 0; i < sourceNameList.length; i++) {
-        console.log("sourceName="+sourceNameList[i]);
+        console.log("sourceName=" + sourceNameList[i]);
         var sourceName = sourceNameList[i];
-        setTimeout(function() {
-            var target_filename = "";
-            // Auto renamimg
-            if ($("#bauto_obtain_target_filename").is(":checked")) {
-                var rule = $("#brename_rule").val();
-                var musicId = 0;
-                if (sourceName.includes('-')) {
-                    var sn = sourceName.substring(sourceName.lastIndexOf(path.sep) + 1);
-                    musicId = parseInt(sn.substring(0, sn.indexOf('-')));
-                    if (isNaN(musicId)) {
-                        msgbox.errorBox("无法从缓存文件名中获取音乐ID.");
-                        return;
-                    }
-    
-                    target_filename = getMusicNameByRule(musicId, rule, sourceName, targetDir, 'batch');
-                    if (target_filename === null) {
-                        // Auto renaming processing is at callback of ipcRender
-                        return;
-                    }
-                } else {
-                    msgbox.errorBox("无法获取音乐ID，将使用原先的名称作为目标音乐名.");
-                    target_filename = sourceName.substring(sourceName.lastIndexOf(path.sep) + 1, sourceName.lastIndexOf("."));
+
+        var target_filename = "";
+        // Auto renamimg
+        if ($("#bauto_obtain_target_filename").is(":checked")) {
+            var rule = $("#brename_rule").val();
+            var musicId = 0;
+            if (sourceName.includes('-')) {
+                var sn = sourceName.substring(sourceName.lastIndexOf(path.sep) + 1);
+                musicId = parseInt(sn.substring(0, sn.indexOf('-')));
+                if (isNaN(musicId)) {
+                    logger.error("无法从缓存文件名中获取音乐ID.", 'batch');
+                    continue;
                 }
-    
+
+                target_filename = getMusicNameByRule(musicId, rule, sourceName, targetDir, 'batch');
+                if (target_filename === null) {
+                    // Auto renaming processing is at callback of ipcRender
+                    continue;
+                }
             } else {
-                target_filename = $("#target_filename").val();
+                logger.error("无法获取音乐ID，将使用原先的名称作为目标音乐名.", 'batch');
+                target_filename = sourceName.substring(sourceName.lastIndexOf(path.sep) + 1, sourceName.lastIndexOf("."));
             }
-            console.log("target_filename=" + target_filename);
-            if (target_filename === null || target_filename === undefined || target_filename.length === 0) {
-                msgbox.errorBox("目标音乐名为空.");
-                return;
-            } else if (target_filename.includes(path.sep)) {
-                msgbox.errorBox("目标音乐名包含非法字符.");
-                return;
-            }
-            processSingleFile(sourceName, targetDir + (targetDir.endsWith(path.sep) ? '' : path.sep) + target_filename + ".mp3", 'batch');
-        }, 1000);
-        
+
+        } else {
+            target_filename = $("#target_filename").val();
+        }
+        console.log("target_filename=" + target_filename);
+        if (target_filename === null || target_filename === undefined || target_filename.length === 0) {
+            logger.error("目标音乐名为空.", 'batch');
+            continue;
+        } else if (target_filename.includes(path.sep)) {
+            logger.error("目标音乐名包含非法字符.", 'batch');
+            continue;
+        }
+        processSingleFile(sourceName, targetDir + (targetDir.endsWith(path.sep) ? '' : path.sep) + target_filename + ".mp3", 'batch');
+
     }
 
 })

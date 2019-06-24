@@ -20,6 +20,9 @@
     <script src="./settings.js"></script>
 
     <style>
+        body {
+            background: #f6f6f6;
+        }
         #main {
             margin: 20px;
         }
@@ -167,7 +170,7 @@
                         <label for="bstatus" class="col-sm-2 control-label">执行记录</label>
                         <div class="col-sm-10">
                             <div class="input-group" style="width: 100%">
-                                <textarea class="form-control" rows="5" id="bstatus" disabled>adsfasd</textarea>
+                                <div class="row" id="batch_logger" style="height:150px;overflow:scroll;border: 1px solid gray;margin-right:20px;"></div>
                             </div><!-- /input-group -->
                         </div>
                     </div>

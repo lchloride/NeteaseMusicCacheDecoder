@@ -9,8 +9,8 @@ let win
 function createWindow() {
     // Create the browser window.
     win = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 960,
+        height: 720,
         webPreferences: {
             nodeIntegration: true
         }
@@ -126,7 +126,7 @@ ipcMain.on('get-meta-info', (event, arg) => {
 
   request.on('error', (error) => {
     console.log(error.message);
-    event.sender.send('get-meta-info-response', error.message);
+    event.sender.send('get-meta-info-response-'+arg, error.message);
   });
   request.on('response', (response) => {
     console.log(`STATUS: ${response.statusCode}`)
@@ -137,7 +137,7 @@ ipcMain.on('get-meta-info', (event, arg) => {
     })
     response.on('end', () => {
       console.log('No more data in response.');
-      event.sender.send('get-meta-info-response', body);
+      event.sender.send('get-meta-info-response-'+arg, body);
     })
   })
   
