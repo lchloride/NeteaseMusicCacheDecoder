@@ -178,9 +178,10 @@ $("#start_single_process").click((e) => {
     if ($("#auto_obtain_target_filename").is(":checked")) {
         var rule = $("#rename_rule").val();
         var musicId = 0;
-        if (sourceName.includes('-')) {
+        var re = /\d+/;
+        if (sourceName.includes('-') || re.test(getFilenameFromFullPath(sourceName))) {
             var sn = sourceName.substring(sourceName.lastIndexOf(path.sep)+1);
-            musicId = parseInt(sn.substring(0, sn.indexOf('-')));
+            musicId = parseInt(sn.substring(0, sn.indexOf('-')===-1?sn.length:sn.indexOf('-')));
             if (isNaN(musicId)) {
                 msgbox.errorBox("无法从缓存文件名中获取音乐ID.");
                 return;
@@ -269,6 +270,8 @@ function parseMusicInfo(response, rule, sourceName, targetDir, type) {
         }
         artists = artists.substring(0, artists.length-1);
         targetFilename = replaceAll(targetFilename, '%%Artists%%', artists);
+    } else {
+        targetFilename = replaceAll(targetFilename, '%%Artists%%', '');
     }
     // Song replacement
     targetFilename = replaceAll(targetFilename, '%%Song%%', (info['name'] !== undefined && info['name'] !== null) ? info['name'] : '');
@@ -286,6 +289,8 @@ function parseMusicInfo(response, rule, sourceName, targetDir, type) {
         }
         alias = alias.substring(0, alias.length-1);
         targetFilename = replaceAll(targetFilename, '%%Alias%%', '('+alias+')');
+    } else {
+        targetFilename = replaceAll(targetFilename, '%%Alias%%', '');
     }
     // Company repalcement
     try {

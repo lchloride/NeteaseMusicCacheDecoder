@@ -43,7 +43,7 @@ var logger = {
     }, 
     primary: function (content, type, handler) {
         if (type === undefined || type === null || type === 'dialog') {
-            msgbox.warningBox(content);
+            msgbox.messageBox(content);
         } else if (type === 'custom') {
             handler(content);
         } else if (type === 'batch') {

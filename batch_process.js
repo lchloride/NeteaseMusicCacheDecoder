@@ -1,3 +1,4 @@
+
 function getFilesInDir(jsonPath) {
     let jsonFiles = [];
     function findJsonFile(dir) {
@@ -167,9 +168,11 @@ $("#bstart_batch_process").click((e) => {
         if ($("#bauto_obtain_target_filename").is(":checked")) {
             var rule = $("#brename_rule").val();
             var musicId = 0;
-            if (sourceName.includes('-')) {
+            var re = /\d+/;
+
+            if (sourceName.includes('-') || re.test(getFilenameFromFullPath(sourceName))) {
                 var sn = sourceName.substring(sourceName.lastIndexOf(path.sep) + 1);
-                musicId = parseInt(sn.substring(0, sn.indexOf('-')));
+                musicId = parseInt(sn.substring(0, sn.indexOf('-')===-1?sn.length:sn.indexOf('-')));
                 if (isNaN(musicId)) {
                     logger.error("无法从缓存文件名中获取音乐ID.", 'batch');
                     continue;
@@ -186,7 +189,8 @@ $("#bstart_batch_process").click((e) => {
             }
 
         } else {
-            target_filename = $("#target_filename").val();
+            target_filename = getFilenameFromFullPath(sourceName);
+            target_filename = target_filename.substring(0, target_filename.indexOf('.'))
         }
         console.log("target_filename=" + target_filename);
         if (target_filename === null || target_filename === undefined || target_filename.length === 0) {
