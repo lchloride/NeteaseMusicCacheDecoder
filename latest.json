@@ -1,0 +1,9 @@
+{
+    "version": "3.1.0",
+    "info": {
+        "zh_cn": "1. 使用Elctron构建App；\n2. 修复音乐信息获取错误的问题。"
+    },
+    "level": "primary",
+    "url": "",
+    "release_date": "2019-06-26"
+}

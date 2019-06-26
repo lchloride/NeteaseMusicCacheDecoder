@@ -146,7 +146,7 @@ $("#bstart_batch_process").click((e) => {
     var targetDir = $("#btarget_dir").val();
     var isTargetDirUsingCache = $("#btarget_dir_using_cache").is(":checked");
     if (isTargetDirUsingCache) {
-        targetDir = sourceName.substring(0, sourceName.lastIndexOf(path.sep) + 1);
+        targetDir = sourceDir;
     } else if (targetDir === undefined || targetDir === null || targetDir.length === 0) {
         msgbox.errorBox("无效的目标文件路径");
         return;
