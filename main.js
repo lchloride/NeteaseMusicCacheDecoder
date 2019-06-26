@@ -144,3 +144,28 @@ ipcMain.on('get-meta-info', (event, arg) => {
   request.end()
 })
 
+
+ipcMain.on('get-latest-version-info', (event, arg) => {
+    const { net } = require('electron')
+    const request = net.request('https://raw.githubusercontent.com/lchloride/NeteaseMusicCacheDecoder/master/latest.json');
+    var body = '';
+  
+    request.on('error', (error) => {
+      console.log(error.message);
+      event.sender.send('get-latest-version-info-response', error.message);
+    });
+    request.on('response', (response) => {
+      console.log(`STATUS: ${response.statusCode}`)
+      console.log(`HEADERS: ${JSON.stringify(response.headers)}`)
+      response.on('data', (chunk) => {
+        console.log(`BODY: ${chunk}`);
+        body += chunk;
+      })
+      response.on('end', () => {
+        console.log('No more data in response.');
+        event.sender.send('get-latest-version-info-response', body);
+      })
+    })
+    
+    request.end()
+  })

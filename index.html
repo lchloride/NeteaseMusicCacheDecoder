@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>网易云音乐缓存解码器 v3.1</title>
-    <link rel="stylesheet" href="./bootstrap.min.css">
+    <link rel="stylesheet" href="./res/bootstrap.min.css">
     <script>
         window.nodeRequire = require;
         delete window.require;
@@ -16,13 +16,14 @@
         const { ipcRenderer } = window.nodeRequire("electron");
         const title = "网易云音乐缓存解码器 v3.1";
     </script>
-    <script src="./alert.js"></script>
-    <script src="./settings.js"></script>
+    <script src="./res/alert.js"></script>
+    <script src="./res/settings.js"></script>
 
     <style>
         body {
             background: #f6f6f6;
         }
+
         #main {
             margin: 20px;
         }
@@ -43,7 +44,8 @@
                 </a>
             </li>
             <li><a href="#single" data-toggle="tab">单文件处理</a></li>
-            <li><a href="#about" data-toggle="tab">关于</a></li>
+            <li><a href="#about" data-toggle="tab">关于 <span class="label label-danger" id="about_label">!</span></a>
+            </li>
             <li><a href="#lang" data-toggle="tab">语言</a></li>
             <li><a href="#quit" data-toggle="tab">退出</a></li>
 
@@ -100,7 +102,8 @@
                             <div class="input-group">
                                 <div class="radio" style="margin-left: 0px;">
                                     <label>
-                                        <input type="radio" name="target_filename" id="brename_by_source" value="source"> 依照缓存文件名
+                                        <input type="radio" name="target_filename" id="brename_by_source"
+                                            value="source"> 依照缓存文件名
                                     </label>
                                 </div>
                             </div>
@@ -110,13 +113,14 @@
                         <div class="col-sm-offset-2 col-sm-10">
                             <div class="radio">
                                 <label>
-                                    <input type="radio" name="target_filename" id="bauto_obtain_target_filename" value="auto" checked>自动获取
+                                    <input type="radio" name="target_filename" id="bauto_obtain_target_filename"
+                                        value="auto" checked>自动获取
                                 </label>
                             </div>
                         </div>
                     </div>
 
-                        
+
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10">
                             <div class="input-group">
@@ -152,7 +156,8 @@
                                         type="button" id="bcompany_single" data-placeholder="%%Company%%">发行公司</button>
                                 </div>
                                 <div class="col-sm-3"><button class="btn btn-default btn-block brename-rule-btn"
-                                        type="button" id="btrack_single" data-placeholder="%%Track%%">曲目ID</button></div>
+                                        type="button" id="btrack_single" data-placeholder="%%Track%%">曲目ID</button>
+                                </div>
                                 <div class="col-sm-3"><button class="btn btn-default btn-block brename-rule-btn"
                                         type="button" id="bdisc_single" data-placeholder="%%Disc%%">唱片ID</button></div>
                             </div>
@@ -170,7 +175,9 @@
                         <label for="bstatus" class="col-sm-2 control-label">执行记录</label>
                         <div class="col-sm-10">
                             <div class="input-group" style="width: 100%">
-                                <div class="row" id="batch_logger" style="height:150px;overflow:scroll;border: 1px solid gray;margin-right:20px;"></div>
+                                <div class="row" id="batch_logger"
+                                    style="height:150px;overflow:scroll;border: 1px solid gray;margin-right:20px;">
+                                </div>
                             </div><!-- /input-group -->
                         </div>
                     </div>
@@ -290,9 +297,10 @@
                 </form>
             </div>
             <div class="tab-pane fade" id="about">
+
                 <div class="media">
                     <div class="media-left">
-                        <img src="./163MusicCacheDecoder.png" class="media-object" style="width:60px">
+                        <img src="./res/163MusicCacheDecoder.png" class="media-object" style="width:60px">
                     </div>
                     <div class="media-body">
                         <h4 class="media-heading">网易云音乐缓存解码器 Netease Music Cache Decoder v3.1</h4>
@@ -302,7 +310,27 @@
                         <p>Built by Electron with Node.js</p>
                     </div>
                 </div>
-
+                <div id="update" style="display: none;">
+                    <p>发现更新<span id="update_version"></span> <span id="update_level"></span> <span id="update_date"></span> </p>
+                    <p>更新内容</p>
+                    <div id="update_info"></div>
+                    <button class="btn btn-primary" id="update">下载更新</button>
+                    <button class="btn btn-warning" id="update">忽略更新</button>
+                </div>
+                <div style="margin-left:70px;margin-top: 10px;">
+                    <p>给个好评？请在Github中收藏项目以支持，谢谢！</p>
+                    <p>十分满意~给作者买杯咖啡，激活Ta的战斗欲！无论多少，都是心意~</p>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <img src="./res/wechatpay_qrcode.png" style="width:150px"><br>
+                            <p>微信支付</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <img src="./res/alipay_qrcode.png" style="width:150px">
+                            <p>支付宝支付</p>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="tab-pane fade" id="lang">
                 <form role="form">
@@ -323,10 +351,10 @@
 
     </div>
 
-    <script src="./jquery.min.js"></script>
-    <script src="./bootstrap.min.js"></script>
-    <script src="./single_process.js"></script>
-    <script src="./batch_process.js"></script>
+    <script src="./res/jquery.min.js"></script>
+    <script src="./res/bootstrap.min.js"></script>
+    <script src="./res/single_process.js"></script>
+    <script src="./res/batch_process.js"></script>
 
 </body>
 
