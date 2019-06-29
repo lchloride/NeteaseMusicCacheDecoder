@@ -2,7 +2,7 @@ var settings = {
     settings: {},
     p: process.env.PWD !== undefined ? 
         process.env.PWD+path.sep : 
-        process.execPath.substring(0, process.execPath.lastIndexOf(path.sep, process.execPath.indexOf('.app'))+1),
+        process.execPath.substring(0, process.execPath.lastIndexOf(path.sep, process.execPath.indexOf('.app')===-1?process.execPath.length:process.execPath.indexOf('.app'))+1),
     load: function () {
         try {
             var data = fs.readFileSync(this.p+'settings.json', { encoding: 'utf-8' });
