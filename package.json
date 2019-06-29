@@ -10,17 +10,30 @@
   "scripts": {
     "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "package": "electron-packager . 'netease_music_decoder' --platform=darwin --arch=x64 --icon=163MusicCacheDecoder.icns --out=./dist --asar --app-version=1.0.0 --ignore=\"(dist|src|docs|.gitignore|LICENSE|README.md|webpack.config*|node_modules)\"",
-    "packageDarwin": "electron-packager . 'netease_music_decoder' --platform=darwin --arch=x64 --icon=163MusicCacheDecoder.icns --out=./dist --asar --app-version=1.0.0 --ignore=\"(dist|src|docs|.gitignore|LICENSE|README.md|webpack.config*|node_modules)\" --overwrite",
+    "package": "electron-packager . 'netease_music_decoder' --platform=darwin --arch=x64 --icon=res/163MusicCacheDecoder.icns --out=./dist --asar --app-version=1.0.0 --ignore=\"(dist|src|docs|.gitignore|LICENSE|README.md|webpack.config*|node_modules)\"",
+    "packageDarwin": "electron-packager . 'netease_music_decoder' --platform=darwin --arch=x64 --icon=res/163MusicCacheDecoder.icns --out=./dist --asar --app-version=1.0.0 --ignore=\"(dist|src|docs|.gitignore|LICENSE|README.md|webpack.config*|node_modules)\" --overwrite",
     "packageDarwin2": "electron-packager . 'netease_music_decoder' --platform=darwin --arch=x64 --icon=163MusicCacheDecoder.icns --out=./dist --asar --app-version=1.0.0",
-    "packageWin": "electron-packager . 'netease_music_decoder' --platform=win32 --arch=x64 --icon=163MusicCacheDecoder.ico --out=./dist --asar --app-version=1.0.0 --ignore=\"(dist|src|docs|.gitignore|LICENSE|README.md|webpack.config.js|node_modules)\" --overwrite",
+    "packageWin": "electron-packager . 'netease_music_decoder' --platform=win32 --arch=x64 --icon=res/163MusicCacheDecoder.ico --out=./dist --asar --app-version=1.0.0 --ignore=\"(dist|src|docs|.gitignore|LICENSE|README.md|webpack.config.js|node_modules)\" --overwrite",
     "packageWin2": "electron-packager . 'netease_music_decoder' --platform=win32 --arch=x64 --icon=163MusicCacheDecoder.ico --out=./dist --asar --app-version=1.0.0",
-    "packageBuilder": "electron-builder --win"
+    "buildWin": "electron-builder --win",
+    "buildDarwin": "electron-builder --mac"
   },
   "author": "lchloride",
   "license": "MIT",
   "devDependencies": {
     "electron": "^5.0.4",
     "electron-packager": "^13.1.1"
-  }
+  },
+  "build": {
+    "appId": "com.lchloride.163musicdecoder",
+    "productName": "NeteaseMusicCacheDecoder",
+    "win": {
+      "target": "zip",
+      "icon": "res/163MusicCacheDecoder.ico"
+    },
+    "mac": {
+      "target": "zip",
+      "icon": "res/163MusicCacheDecoder.icns"
+    }
+ }
 }

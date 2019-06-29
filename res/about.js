@@ -32,14 +32,37 @@ function checkUpdate() {
         version_obj = obj;
         // Check version info
         // A newer version is found
-        if (compareVersion(version, obj['version']) < 0) {
+        if (compareVersion(version, obj['version']) < 0 && 
+                compareVersion(settings.getSetting('ignore_version'), obj['version']) !== 0) {
             $('#update_wrapper').css('display', 'block');
             $('#update_version').text(obj['version']);
-            $('#update_level').text(obj['level']);
+            $('#update_level').text(getLevelDesc((obj['level'])));
             $('#update_date').text(obj['release_date']);
             $('#update_info').text(obj['info']['zh_cn']);
+            $('#about_label').removeClass('label-danger label-warning label-info');
+            if (obj['level'] === 'primary') {
+                $('#about_label').css('display', 'inline').addClass('label-danger');
+            } else if (obj['level'] === 'hotfix') {
+                $('#about_label').css('display', 'inline').addClass('label-danger');
+            } else if (obj['level'] === 'minor') {
+                $('#about_label').css('display', 'inline').addClass('label-warning');
+            } else if (obj['level'] === 'beta') {
+                $('#about_label').css('display', 'inline').addClass('label-info');
+            }
         }
     });
+}
+
+function getLevelDesc(level) {
+    if (level === 'primary') {
+        return '重要';
+    } else if (level === 'hotfix') {
+        return '重要Bug修复';
+    } else if (level === 'minor') {
+        return '普通';
+    } else if (level === 'beta') {
+        return '测试';
+    }
 }
 
 function compareVersion(v1, v2) {
@@ -108,4 +131,17 @@ function genereateFileMD5(filename) {
     console.log(result);
 }
 
+$('#update_ignore').click((event) => {
+    settings.setSetting('ignore_version', version_obj['version']);
+    settings.write();
+    $('#update_wrapper').css('display', 'none');
+    $('#about_label').css('display', 'none');
+})
 
+$(document).ready((event) => {
+    checkUpdate();
+});
+
+$('#quit').click((event) => {
+    ipcRenderer.send('quit');
+})

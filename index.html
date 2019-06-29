@@ -20,7 +20,7 @@
     </script>
     <script src="./res/alert.js"></script>
     <script src="./res/settings.js"></script>
-
+    
     <style>
         body {
             background: #f6f6f6;
@@ -32,6 +32,9 @@
 
         .tab-pane {
             margin-top: 20px;
+        }
+        .inline-margin {
+            margin-left:5px;
         }
     </style>
 </head>
@@ -46,7 +49,7 @@
                 </a>
             </li>
             <li><a href="#single" data-toggle="tab">单文件处理</a></li>
-            <li><a href="#about" data-toggle="tab">关于 <span class="label label-danger" id="about_label">!</span></a>
+            <li><a href="#about" data-toggle="tab">关于 <span class="label label-danger" id="about_label" style="display: none;">!</span></a>
             </li>
             <li><a href="#lang" data-toggle="tab">语言</a></li>
             <li><a href="#quit" data-toggle="tab">退出</a></li>
@@ -313,9 +316,10 @@
                     </div>
                 </div>
                 <div id="update_wrapper" style="display: none;margin-left:70px;">
-                    <p>发现更新<span id="update_version"></span> <span id="update_level"></span> <span id="update_date"></span> </p>
-                    <p>更新内容</p>
-                    <div id="update_info"></div>
+                    <p><strong style="font-size: 125%">发现更新</strong><span id="update_version" class="inline-margin"></span> 
+                        <span id="update_level" class="inline-margin"></span> <span id="update_date" class="inline-margin"></span> </p>
+                    <p><strong>更新内容</strong></p>
+                    <p id="update_info"></p>
                     <button class="btn btn-primary" id="update_download">后台下载更新</button>
                     <button class="btn btn-warning" id="update_ignore">忽略此版本</button>
                     <span id="download_progress"></span>
@@ -354,6 +358,8 @@
                 </form>
             </div>
             <div class="tab-pane fade" id="quit">
+                    <button class="btn btn-primary" id="quit">退出程序</button>
+                    <p>在macOS中，点击左上角的X只是关闭程序窗口，程序依然在Dock中停留(与Cmd+W效果相同)。使用上面的按钮可以彻底退出程序(与Cmd+Q效果相同)。在Windows系统中没有前述的区别。</p>
             </div>
         </div>
 

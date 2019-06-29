@@ -16,7 +16,7 @@
     },
     "default_name": {
         "win": "electron-v5.0.6-darwin-x64.zip",
-        "mac": "electron-v5.0.6-darwin-x64.zip",
+        "darwin": "electron-v5.0.6-darwin-x64.zip",
         "linux": "electron-v5.0.6-darwin-x64.zip"
     },
     "release_date": "2019-06-26"

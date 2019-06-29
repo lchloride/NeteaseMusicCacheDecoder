@@ -1,6 +1,8 @@
 var settings = {
     settings: {},
-    p: process.execPath.substring(0, process.execPath.indexOf('netease_music_decoder.app')),
+    p: process.env.PWD !== undefined ? 
+        process.env.PWD+path.sep : 
+        process.execPath.substring(0, process.execPath.lastIndexOf(path.sep, process.execPath.indexOf('.app'))+1),
     load: function () {
         try {
             var data = fs.readFileSync(this.p+'settings.json', { encoding: 'utf-8' });

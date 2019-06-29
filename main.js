@@ -1,5 +1,5 @@
 "use strict"
-const { app, BrowserWindow, ipcMain, dialog } = require('electron')
+const { app, BrowserWindow, ipcMain, dialog, Menu } = require('electron')
 const title = "网易云音乐缓存解码器 v3.1";
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -11,6 +11,8 @@ function createWindow() {
     win = new BrowserWindow({
         width: 960,
         height: 720,
+        minWidth: 800, 
+        minHeight: 600,
         webPreferences: {
             nodeIntegration: true
         }
@@ -19,8 +21,11 @@ function createWindow() {
     // and load the index.html of the app.
     win.loadFile('index.html')
 
+    // Hide default menu bar
+    win.removeMenu();
+
     // Open the DevTools.
-    win.webContents.openDevTools()
+    // win.webContents.openDevTools()
 
     // Emitted when the window is closed.
     win.on('closed', () => {
@@ -211,3 +216,7 @@ ipcMain.on('save-dialog', (event, defaultName) => {
         event.sender.send('save-dialog', filename);
     })
 });
+
+ipcMain.on('quit', (event) => {
+    app.quit();
+})

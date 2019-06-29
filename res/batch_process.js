@@ -162,6 +162,9 @@ $("#bstart_batch_process").click((e) => {
     for (var i = 0; i < sourceNameList.length; i++) {
         console.log("sourceName=" + sourceNameList[i]);
         var sourceName = sourceNameList[i];
+        if (!sourceName.endsWith('uc') && !sourceName.endsWith('uc!') ) {
+            continue;
+        }
 
         var target_filename = "";
         // Auto renamimg
