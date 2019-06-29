@@ -29,7 +29,7 @@ var settings = {
         try {
             fs.writeFileSync(this.p+'settings.json', JSON.stringify(this.settings), { encoding: 'utf-8' });
         } catch (e) {
-            msgbox.errorBox("读取配置文件出错:" + e.message);
+            msgbox.errorBox("写入配置文件出错:" + e.message);
             return;
         }
     }

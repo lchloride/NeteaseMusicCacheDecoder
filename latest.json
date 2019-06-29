@@ -4,6 +4,20 @@
         "zh_cn": "1. 使用Elctron构建App；\n2. 修复音乐信息获取错误的问题。"
     },
     "level": "primary",
-    "url": "",
+    "url": {
+        "win": "https://github.com/electron/electron/releases/download/v5.0.6/electron-v5.0.6-darwin-x64.zip",
+        "darwin": "",
+        "linux": ""
+    },
+    "md5": {
+        "win": "3c0da3b94db58cc3769fd2384cb484fd",
+        "darwin": "",
+        "linux": ""
+    },
+    "default_name": {
+        "win": "electron-v5.0.6-darwin-x64.zip",
+        "mac": "",
+        "linux": ""
+    },
     "release_date": "2019-06-26"
 }

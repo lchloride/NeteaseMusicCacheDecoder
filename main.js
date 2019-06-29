@@ -102,11 +102,11 @@ function showDialog(options) {
     // On macOS message is like title while detail is like message.
     // Title does not in use.
     if (process.platform === 'darwin') {
-        options.detail = ""+options.message;
+        options.detail = "" + options.message;
         options.message = title;
     }
     dialog.showMessageBox(options);
-    
+
 }
 
 ipcMain.on('open-file-dialog', (event, options) => {
@@ -120,52 +120,94 @@ ipcMain.on('open-file-dialog', (event, options) => {
 });
 
 ipcMain.on('get-meta-info', (event, arg) => {
-  const { net } = require('electron')
-  const request = net.request('http://music.163.com/api/song/detail/?id='+arg+'&ids=['+arg+']');
-  var body = '';
+    const { net } = require('electron')
+    const request = net.request('http://music.163.com/api/song/detail/?id=' + arg + '&ids=[' + arg + ']');
+    var body = '';
 
-  request.on('error', (error) => {
-    console.log(error.message);
-    event.sender.send('get-meta-info-response-'+arg, error.message);
-  });
-  request.on('response', (response) => {
-    console.log(`STATUS: ${response.statusCode}`)
-    console.log(`HEADERS: ${JSON.stringify(response.headers)}`)
-    response.on('data', (chunk) => {
-      console.log(`BODY: ${chunk}`);
-      body += chunk;
+    request.on('error', (error) => {
+        console.log(error.message);
+        event.sender.send('get-meta-info-response-' + arg, error.message);
+    });
+    request.on('response', (response) => {
+        console.log(`STATUS: ${response.statusCode}`)
+        console.log(`HEADERS: ${JSON.stringify(response.headers)}`)
+        response.on('data', (chunk) => {
+            console.log(`BODY: ${chunk}`);
+            body += chunk;
+        })
+        response.on('end', () => {
+            console.log('No more data in response.');
+            event.sender.send('get-meta-info-response-' + arg, body);
+        })
     })
-    response.on('end', () => {
-      console.log('No more data in response.');
-      event.sender.send('get-meta-info-response-'+arg, body);
-    })
-  })
-  
-  request.end()
+
+    request.end()
 })
 
 
-ipcMain.on('get-latest-version-info', (event, arg) => {
+ipcMain.on('get-latest-version-info', (event) => {
     const { net } = require('electron')
     const request = net.request('https://raw.githubusercontent.com/lchloride/NeteaseMusicCacheDecoder/master/latest.json');
     var body = '';
-  
+    console.log('On lastest version info')
     request.on('error', (error) => {
-      console.log(error.message);
-      event.sender.send('get-latest-version-info-response', error.message);
+        console.log(error.message);
+        event.sender.send('get-latest-version-info-response', error.message);
     });
     request.on('response', (response) => {
-      console.log(`STATUS: ${response.statusCode}`)
-      console.log(`HEADERS: ${JSON.stringify(response.headers)}`)
-      response.on('data', (chunk) => {
-        console.log(`BODY: ${chunk}`);
-        body += chunk;
-      })
-      response.on('end', () => {
-        console.log('No more data in response.');
-        event.sender.send('get-latest-version-info-response', body);
-      })
+        console.log(`STATUS: ${response.statusCode}`)
+        console.log(`HEADERS: ${JSON.stringify(response.headers)}`)
+        response.on('data', (chunk) => {
+            console.log(`BODY: ${chunk}`);
+            body += chunk;
+        })
+        response.on('end', () => {
+            console.log('No more data in response.');
+            event.sender.send('get-latest-version-info-response', body);
+        })
     })
-    
+
     request.end()
-  })
+})
+
+ipcMain.on('get-latest-version-file', (event, arg) => {
+    const { net } = require('electron')
+    const request = net.request(arg);
+    console.log('On lastest version file')
+
+    request.on('error', (error) => {
+        console.log(error.message);
+        event.sender.send('get-latest-version-file-response', error.message);
+    });
+    request.on('response', (response) => {
+        console.log(`STATUS: ${response.statusCode}`)
+        console.log(`HEADERS: ${JSON.stringify(response.headers)}`)
+        var len = parseInt(response.headers["content-length"][0]);
+        var total = 0;
+        var body = Buffer.alloc(len);
+        response.on('data', (chunk) => {
+            chunk.copy(body, total)
+            total += chunk.length;
+            // console.log(`BODY: ${chunk}`);
+            // console.log(body.length, total);
+            event.sender.send('get-latest-version-file-progress', total / len * 100);
+        })
+        response.on('end', () => {
+            console.log('No more data in response. total length='+total, body.length);
+            event.sender.send('get-latest-version-file-response', body);
+        })
+    })
+
+    request.end()
+})
+
+ipcMain.on('save-dialog', (event, defaultName) => {
+    const options = {
+        title: '选择一个目录保存新版本程序',
+        message: '选择一个目录保存新版本程序',
+        defaultPath: defaultName
+    }
+    dialog.showSaveDialog(options, (filename) => {
+        event.sender.send('save-dialog', filename);
+    })
+});

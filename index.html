@@ -13,8 +13,10 @@
         var path = window.nodeRequire("path");
         var fs = window.nodeRequire("fs");
         const os = window.nodeRequire("os");
+        const crypto = window.nodeRequire("crypto");
         const { ipcRenderer } = window.nodeRequire("electron");
         const title = "网易云音乐缓存解码器 v3.1";
+        const version = "3.0.0";
     </script>
     <script src="./res/alert.js"></script>
     <script src="./res/settings.js"></script>
@@ -310,12 +312,18 @@
                         <p>Built by Electron with Node.js</p>
                     </div>
                 </div>
-                <div id="update" style="display: none;">
+                <div id="update_wrapper" style="display: block;margin-left:70px;">
                     <p>发现更新<span id="update_version"></span> <span id="update_level"></span> <span id="update_date"></span> </p>
                     <p>更新内容</p>
                     <div id="update_info"></div>
                     <button class="btn btn-primary" id="update">下载更新</button>
                     <button class="btn btn-warning" id="update">忽略更新</button>
+                    <span id="download_progress"></span>
+                    <div class="progress" style="display: block;margin-top:10px;">
+                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60" 
+                                aria-valuemin="0" aria-valuemax="100" style="width: 00%;" id="download_progressbar">
+                            </div>
+                        </div>
                 </div>
                 <div style="margin-left:70px;margin-top: 10px;">
                     <p>给个好评？请在Github中收藏项目以支持，谢谢！</p>
@@ -355,6 +363,7 @@
     <script src="./res/bootstrap.min.js"></script>
     <script src="./res/single_process.js"></script>
     <script src="./res/batch_process.js"></script>
+    <script src="./res/about.js"></script>
 
 </body>
 
