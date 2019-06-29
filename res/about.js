@@ -11,7 +11,10 @@ ipcRenderer.on('get-latest-version-file-progress', (event, progress) => {
     }
 })
 
+var version_obj =  {};
+
 function checkUpdate() {
+    $('#update_wrapper').css('display', 'none');
     ipcRenderer.send('get-latest-version-info');
     ipcRenderer.once('get-latest-version-info-response', (event, body) => {
         if (body === undefined || body === null || body.length === 0) {
@@ -26,6 +29,7 @@ function checkUpdate() {
             return
         }
         var obj = JSON.parse(body);
+        version_obj = obj;
         // Check version info
         // A newer version is found
         if (compareVersion(version, obj['version']) < 0) {
@@ -56,18 +60,37 @@ function compareVersion(v1, v2) {
     return 0;
 }
 
-function updateProgram() {
-    ipcRenderer.send('save-dialog', 'electron-v5.0.6-darwin-x64.zip');
+$('#update_download').click((event) => {
+    if (compareVersion(version, version_obj['version']) < 0) {
+        var platform = 'win';
+        if (process.platform === 'darwin') 
+            platform = 'darwin'
+        else if (process.platform === 'win32')
+            platform = 'win'
+        else
+            platform = 'linux'
+
+        updateProgram(version_obj['default_name'][platform], version_obj['url'][platform], platform);
+    }
+})
+
+function updateProgram(default_name, url, platform) {
+    ipcRenderer.send('save-dialog', default_name);
     ipcRenderer.once('save-dialog', (event, filename) => {
         console.log(filename);
         if (filename === undefined || filename === null || filename.length === 0) {
             return;
         }
-        ipcRenderer.send('get-latest-version-file', 'https://github.com/electron/electron/releases/download/v5.0.6/electron-v5.0.6-darwin-x64.zip');
+        ipcRenderer.send('get-latest-version-file', url);
         ipcRenderer.once('get-latest-version-file-response', (event, body) => {
             console.log('Downloaded body size = '+body.length);
             $('#download_progress').text('进度：' + '100%');
             $('#download_progressbar').css('width',  '100%');
+            var downloadMD5 = crypto.createHash('md5').update(body).digest("hex");
+            if (downloadMD5 !== version_obj['md5'][platform]) {
+                msgbox.errorBox('下载内容校验失败，请重新下载');
+                return;
+            }
             try {
                 fs.writeFileSync(filename, body, 'binary');
             } catch (e) {

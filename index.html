@@ -312,12 +312,12 @@
                         <p>Built by Electron with Node.js</p>
                     </div>
                 </div>
-                <div id="update_wrapper" style="display: block;margin-left:70px;">
+                <div id="update_wrapper" style="display: none;margin-left:70px;">
                     <p>发现更新<span id="update_version"></span> <span id="update_level"></span> <span id="update_date"></span> </p>
                     <p>更新内容</p>
                     <div id="update_info"></div>
-                    <button class="btn btn-primary" id="update">下载更新</button>
-                    <button class="btn btn-warning" id="update">忽略更新</button>
+                    <button class="btn btn-primary" id="update_download">后台下载更新</button>
+                    <button class="btn btn-warning" id="update_ignore">忽略此版本</button>
                     <span id="download_progress"></span>
                     <div class="progress" style="display: block;margin-top:10px;">
                             <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60" 

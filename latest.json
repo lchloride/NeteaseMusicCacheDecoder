@@ -6,18 +6,18 @@
     "level": "primary",
     "url": {
         "win": "https://github.com/electron/electron/releases/download/v5.0.6/electron-v5.0.6-darwin-x64.zip",
-        "darwin": "",
-        "linux": ""
+        "darwin": "https://github.com/electron/electron/releases/download/v5.0.6/electron-v5.0.6-darwin-x64.zip",
+        "linux": "https://github.com/electron/electron/releases/download/v5.0.6/electron-v5.0.6-darwin-x64.zip"
     },
     "md5": {
         "win": "3c0da3b94db58cc3769fd2384cb484fd",
-        "darwin": "",
-        "linux": ""
+        "darwin": "3c0da3b94db58cc3769fd2384cb484fd",
+        "linux": "3c0da3b94db58cc3769fd2384cb484fd"
     },
     "default_name": {
         "win": "electron-v5.0.6-darwin-x64.zip",
-        "mac": "",
-        "linux": ""
+        "mac": "electron-v5.0.6-darwin-x64.zip",
+        "linux": "electron-v5.0.6-darwin-x64.zip"
     },
     "release_date": "2019-06-26"
 }
