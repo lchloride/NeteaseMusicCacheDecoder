@@ -3,21 +3,21 @@
     "info": {
         "zh_cn": "1. 使用Elctron构建App；\n2. 修复音乐信息获取错误的问题。"
     },
-    "level": "primary",
+    "level": "beta",
     "url": {
-        "win": "https://github.com/electron/electron/releases/download/v5.0.6/electron-v5.0.6-darwin-x64.zip",
-        "darwin": "https://github.com/electron/electron/releases/download/v5.0.6/electron-v5.0.6-darwin-x64.zip",
-        "linux": "https://github.com/electron/electron/releases/download/v5.0.6/electron-v5.0.6-darwin-x64.zip"
+        "win": "https://github.com/lchloride/NeteaseMusicCacheDecoder/releases/download/v3.1.0/NeteaseMusicCacheDecoder-3.1.0-win.zip",
+        "darwin": "https://github.com/lchloride/NeteaseMusicCacheDecoder/releases/download/v3.1.0/NeteaseMusicCacheDecoder-3.1.0-mac.zip",
+        "linux": "https://github.com/lchloride/NeteaseMusicCacheDecoder/releases/download/v3.1.0/NeteaseMusicCacheDecoder-3.1.0-mac.zip"
     },
     "md5": {
-        "win": "3c0da3b94db58cc3769fd2384cb484fd",
-        "darwin": "3c0da3b94db58cc3769fd2384cb484fd",
-        "linux": "3c0da3b94db58cc3769fd2384cb484fd"
+        "win": "0c86e1ab73fd284e3ce7e8761760ede2",
+        "darwin": "8c36778650291ef60781db2bddfff234",
+        "linux": "8c36778650291ef60781db2bddfff234"
     },
     "default_name": {
-        "win": "electron-v5.0.6-darwin-x64.zip",
-        "darwin": "electron-v5.0.6-darwin-x64.zip",
-        "linux": "electron-v5.0.6-darwin-x64.zip"
+        "win": "NeteaseMusicCacheDecoder-3.1.0-win.zip",
+        "darwin": "NeteaseMusicCacheDecoder-3.1.0-mac.zip",
+        "linux": "NeteaseMusicCacheDecoder-3.1.0-mac.zip"
     },
-    "release_date": "2019-06-26"
+    "release_date": "2019-06-30"
 }
