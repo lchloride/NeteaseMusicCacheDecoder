@@ -154,7 +154,7 @@ ipcMain.on('get-latest-version-info', (event) => {
     const { net } = require('electron')
     // const request = net.request('https://raw.githubusercontent.com/lchloride/NeteaseMusicCacheDecoder/master/latest.json');
     // const request = net.request('https://public.dm.files.1drv.com/y4mASkp5_2ydoFEQZySVaE-71hBG6d6pRobBpQ5f-BPwi6Mb-Mc_wcEfcNb3RVLaXO2NZ3qiLW9cNl0z5sHT2y5N9r5R__DbbVuymRjIWqLUCUu35EhnRngisz93a7qtTPMpTZsIzJJo3wpLukU2Lp4RT0PwZVhAuJTBZKA8rEArGI2mZA9qBFtBTztfkaQPJhmDYIq1r8e-aE3UdlI8N5MbgkKC55OW_kbXim9-wJZZ0A');
-    const request = net.request('https://github.com/lchloride/NeteaseMusicCacheDecoder/releases/download/v3.2.0/latest.json');
+    const request = net.request('https://github.com/lchloride/NeteaseMusicCacheDecoder/releases/download/lastest/latest.json');
     var body = '';
     console.log('On lastest version info')
     request.on('error', (error) => {
