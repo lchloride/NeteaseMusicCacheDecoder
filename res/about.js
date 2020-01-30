@@ -6,34 +6,41 @@ ipcRenderer.on('get-latest-version-file-progress', (event, progress) => {
         last_progress = progress;
     }
     if (last_progress.toFixed(1) !== progress.toFixed(1)) {
-        $('#download_progress').text('进度：' + progress.toFixed(2)+'%');
+        $('#download_progress').text(langUtil.getTranslation('Code_Progress') + progress.toFixed(2)+'%');
         last_progress = progress;
     }
 })
 
 var version_obj =  {};
 
-function checkUpdate() {
+function checkUpdate(isManually) {
     $('#update_wrapper').css('display', 'none');
     ipcRenderer.send('get-latest-version-info');
     ipcRenderer.once('get-latest-version-info-response', (event, body) => {
+        console.log(body);
         if (body === undefined || body === null || body.length === 0) {
-            msgbox.errorBox('获取更新信息失败');
+            msgbox.errorBox(langUtil.getTranslation('Code_ObtainUpdateInfoFailure'));
             return
         }
+
         if (body === 'net::ERR_INTERNET_DISCONNECTED') {
-            logger.error('网络无法连接');
-            return
-        } else if (body.startsWith('net')) {
-            logger.error('网络错误:' + body);
-            return
+            logger.error(langUtil.getTranslation('Code_ObtainUpdateInfoFailure')+' - '+ langUtil.getTranslation('Code_NetworkUnavailable'));
+            return;
+        } else if (body === 'net::ERR_CONNECTION_REFUSED') {
+            logger.error(langUtil.getTranslation('Code_ObtainUpdateInfoFailure')+' - '+ langUtil.getTranslation('Code_ConnectionRefused'));
+            return;
+        } else if (body.startsWith('net::')) {
+            logger.error(langUtil.getTranslation('Code_ObtainUpdateInfoFailure')+' - ' + body);
+            return;
         }
+
         var obj = JSON.parse(body);
         version_obj = obj;
         // Check version info
         // A newer version is found
         if (compareVersion(version, obj['version']) < 0 && 
-                compareVersion(settings.getSetting('ignore_version'), obj['version']) !== 0) {
+                ((compareVersion(settings.getSetting('ignore_version'), obj['version']) !== 0 && 
+                isManually !== true) || isManually === true)) {
             $('#update_wrapper').css('display', 'block');
             $('#update_version').text(obj['version']);
             $('#update_level').text(getLevelDesc((obj['level'])));
@@ -55,13 +62,13 @@ function checkUpdate() {
 
 function getLevelDesc(level) {
     if (level === 'primary') {
-        return '重要';
+        return langUtil.getTranslation('Code_Primary');
     } else if (level === 'hotfix') {
-        return '重要Bug修复';
+        return langUtil.getTranslation('Code_Hotfix');
     } else if (level === 'minor') {
-        return '普通';
+        return langUtil.getTranslation('Code_Minor');
     } else if (level === 'beta') {
-        return '测试';
+        return langUtil.getTranslation('Code_Beta');
     }
 }
 
@@ -107,20 +114,20 @@ function updateProgram(default_name, url, platform) {
         ipcRenderer.send('get-latest-version-file', url);
         ipcRenderer.once('get-latest-version-file-response', (event, body) => {
             console.log('Downloaded body size = '+body.length);
-            $('#download_progress').text('进度：' + '100%');
+            $('#download_progress').text(langUtil.getTranslation('Code_Progress') + '100%');
             $('#download_progressbar').css('width',  '100%');
             var downloadMD5 = crypto.createHash('md5').update(body).digest("hex");
             if (downloadMD5 !== version_obj['md5'][platform]) {
-                msgbox.errorBox('下载内容校验失败，请重新下载');
+                msgbox.errorBox(langUtil.getTranslation('Code_UpdateVerifyFailure'));
                 return;
             }
             try {
                 fs.writeFileSync(filename, body, 'binary');
             } catch (e) {
-                msgbox.errorBox("出错:" + e.message);
+                msgbox.errorBox(langUtil.getTranslation('Code_UpdateWriteFailure') + e.message);
                 return;
             }
-            msgbox.messageBox('下载新版本完成，请解压覆盖原版本文件。');
+            msgbox.messageBox(langUtil.getTranslation('Code_UpdateFinished'));
         })
     })
 }
@@ -140,8 +147,11 @@ $('#update_ignore').click((event) => {
 
 $(document).ready((event) => {
     checkUpdate();
+    $('#check_update_btn').click((ev) => {
+        checkUpdate(true);
+    });
 });
 
-$('#quit').click((event) => {
+$('#quit_btn').click((event) => {
     ipcRenderer.send('quit');
 })

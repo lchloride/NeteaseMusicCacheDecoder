@@ -1,23 +1,23 @@
 {
-    "version": "3.1.0",
+    "version": "3.2.0",
     "info": {
-        "zh_cn": "1. 使用Elctron构建App；\n2. 修复音乐信息获取错误的问题。"
+        "zh_cn": "1. 界面支持简体中文和英文；<br/>2. 增加手动检查更新的功能；<br/>3. 检查更新的URL变化，避免防火墙引起的更新失败"
     },
-    "level": "beta",
+    "level": "primary",
     "url": {
-        "win": "https://github.com/lchloride/NeteaseMusicCacheDecoder/releases/download/v3.1.0/NeteaseMusicCacheDecoder-3.1.0-win.zip",
-        "darwin": "https://github.com/lchloride/NeteaseMusicCacheDecoder/releases/download/v3.1.0/NeteaseMusicCacheDecoder-3.1.0-mac.zip",
-        "linux": "https://github.com/lchloride/NeteaseMusicCacheDecoder/releases/download/v3.1.0/NeteaseMusicCacheDecoder-3.1.0-mac.zip"
+        "win": "https://github.com/lchloride/NeteaseMusicCacheDecoder/releases/download/v3.2.0/NeteaseMusicCacheDecoder-3.2.0-win.zip",
+        "darwin": "https://github.com/lchloride/NeteaseMusicCacheDecoder/releases/download/v3.2.0/NeteaseMusicCacheDecoder-3.2.0-mac.zip",
+        "linux": "https://github.com/lchloride/NeteaseMusicCacheDecoder/releases/download/v3.2.0/NeteaseMusicCacheDecoder-3.2.0-mac.zip"
     },
     "md5": {
-        "win": "0c86e1ab73fd284e3ce7e8761760ede2",
-        "darwin": "8c36778650291ef60781db2bddfff234",
-        "linux": "8c36778650291ef60781db2bddfff234"
+        "win": "7d1b365fb364e143adfb3607defc894f",
+        "darwin": "45d7dada4b8ac20ad5d19533b0ae3b77",
+        "linux": "45d7dada4b8ac20ad5d19533b0ae3b77"
     },
     "default_name": {
-        "win": "NeteaseMusicCacheDecoder-3.1.0-win.zip",
-        "darwin": "NeteaseMusicCacheDecoder-3.1.0-mac.zip",
-        "linux": "NeteaseMusicCacheDecoder-3.1.0-mac.zip"
+        "win": "NeteaseMusicCacheDecoder-3.2.0-win.zip",
+        "darwin": "NeteaseMusicCacheDecoder-3.2.0-mac.zip",
+        "linux": "NeteaseMusicCacheDecoder-3.2.0-mac.zip"
     },
-    "release_date": "2019-06-30"
+    "release_date": "2020-01-30"
 }

@@ -38,10 +38,10 @@ $("#bcache_dir_selection_btn").click((e) => {
     getSelectedFileByDialog({
         properties: ['openDirectory'],
         filters: [
-            { name: '网易云音乐缓存', extensions: ['uc', 'uc!'] }
+            { name: langUtil.getTranslation('Hint_CacheFileFilter'), extensions: ['uc', 'uc!'] }
         ],
         title: title,
-        message: '选择一个音乐缓存目录',
+        message: langUtil.getTranslation('Hint_SelectCacheDirectory'),
         defaultPath: $("#bdefault_cache_dir").is(":checked") ? replaceAll(settings.getSetting('macOS_default_cache_dir'), '%%Username%%', os.userInfo().username) : ''
     }, (files) => {
         if (files === undefined || files === null || files.length === 0) {
@@ -61,7 +61,7 @@ $("#btarget_dir_selection_btn").click((e) => {
         getSelectedFileByDialog({
             properties: ['openDirectory'],
             title: title,
-            message: '选择目标路径'
+            message: langUtil.getTranslation('Hint_SelectTargetDirectory')
         }, (dirs) => {
             if (dirs === undefined || dirs === null || dirs.length === 0) {
                 $("#btarget_dir").val("");
@@ -133,12 +133,12 @@ $("#bstart_batch_process").click((e) => {
     var btn = $(e.target);
     var sourceDir = $("#bcache_dir").val();
     if (sourceDir === undefined || sourceDir === null || sourceDir.length === 0) {
-        msgbox.errorBox("无效的缓存文件名称");
+        msgbox.errorBox(langUtil.getTranslation('Code_InvalidFileName'));
         return;
     } else {
         var sourceStat = fs.statSync(sourceDir);
         if (!sourceStat.isDirectory()) {
-            msgbox.errorBox("缓存文件路径不是合法的路径");
+            msgbox.errorBox(langUtil.getTranslation('Hint_InvalidCacheDirectory'));
             return;
         }
     }
@@ -148,12 +148,12 @@ $("#bstart_batch_process").click((e) => {
     if (isTargetDirUsingCache) {
         targetDir = sourceDir;
     } else if (targetDir === undefined || targetDir === null || targetDir.length === 0) {
-        msgbox.errorBox("无效的目标文件路径");
+        msgbox.errorBox(langUtil.getTranslation('Code_InvalidTargetDirectory'));
         return;
     }
     var targetDirStat = fs.statSync(targetDir);
     if (!targetDirStat.isDirectory()) {
-        msgbox.errorBox("目标文件路径不是合法的路径");
+        msgbox.errorBox(langUtil.getTranslation('Code_InvalidTargetDirectory'));
         return;
     }
 
@@ -177,7 +177,7 @@ $("#bstart_batch_process").click((e) => {
                 var sn = sourceName.substring(sourceName.lastIndexOf(path.sep) + 1);
                 musicId = parseInt(sn.substring(0, sn.indexOf('-')===-1?sn.length:sn.indexOf('-')));
                 if (isNaN(musicId)) {
-                    logger.error("无法从缓存文件名中获取音乐ID.", 'batch');
+                    logger.error(langUtil.getTranslation('Code_FailedToGetMusicId'), 'batch');
                     continue;
                 }
 
@@ -187,7 +187,7 @@ $("#bstart_batch_process").click((e) => {
                     continue;
                 }
             } else {
-                logger.error("无法获取音乐ID，将使用原先的名称作为目标音乐名.", 'batch');
+                logger.error(langUtil.getTranslation('Code_FailedToGetMusicIdUsingOriginalName'), 'batch');
                 target_filename = sourceName.substring(sourceName.lastIndexOf(path.sep) + 1, sourceName.lastIndexOf("."));
             }
 
@@ -197,10 +197,10 @@ $("#bstart_batch_process").click((e) => {
         }
         console.log("target_filename=" + target_filename);
         if (target_filename === null || target_filename === undefined || target_filename.length === 0) {
-            logger.error("目标音乐名为空.", 'batch');
+            logger.error(langUtil.getTranslation('Code_EmptyTargetMusicName'), 'batch');
             continue;
         } else if (target_filename.includes(path.sep)) {
-            logger.error("目标音乐名包含非法字符.", 'batch');
+            logger.error(langUtil.getTranslation('Code_InvalidSymbolFound'), 'batch');
             continue;
         }
         processSingleFile(sourceName, targetDir + (targetDir.endsWith(path.sep) ? '' : path.sep) + target_filename + ".mp3", 'batch');

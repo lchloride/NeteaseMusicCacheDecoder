@@ -33,10 +33,10 @@ $("#cache_file_selection_btn").click((e) => {
     getSelectedFileByDialog({
         properties: ['openFile'],
         filters: [
-            { name: '网易云音乐缓存', extensions: ['uc', 'uc!'] }
+            { name: langUtil.getTranslation('Hint_CacheFileFilter'), extensions: ['uc', 'uc!'] }
         ],
         title: title,
-        message: '选择一个音乐缓存文件',
+        message: langUtil.getTranslation('Hint_SelectCacheFile'),
         defaultPath: $("#default_cache_dir").is(":checked") ? replaceAll(settings.getSetting('macOS_default_cache_dir'), '%%Username%%', os.userInfo().username) : ''
     }, (files) => {
         if (files === undefined || files === null || files.length === 0) {
@@ -75,7 +75,7 @@ $("#target_dir_selection_btn").click((e) => {
         getSelectedFileByDialog({
             properties: ['openDirectory'],
             title: title,
-            message: '选择目标路径'
+            message: langUtil.getTranslation('Hint_SelectTargetDirectory')
         }, (dirs) => {
             if (dirs === undefined || dirs === null || dirs.length === 0) {
                 $("#target_dir").val("");
@@ -149,12 +149,12 @@ $("#start_single_process").click((e) => {
     var btn = $(e.target);
     var sourceName = $("#cache_file").val();
     if (sourceName === undefined || sourceName === null || sourceName.length === 0) {
-        msgbox.errorBox("无效的缓存文件名称");
+        msgbox.errorBox(langUtil.getTranslation('Code_InvalidFileName'));
         return;
     } else {
         var sourceStat = fs.statSync(sourceName);
         if (!sourceStat.isFile()) {
-            msgbox.errorBox("缓存文件不是合法的文件");
+            msgbox.errorBox(langUtil.getTranslation('Code_InvalidFileFormat'));
             return;
         }
     }
@@ -164,12 +164,12 @@ $("#start_single_process").click((e) => {
     if (isTargetDirUsingCache) {
         targetDir = sourceName.substring(0, sourceName.lastIndexOf(path.sep) + 1);
     } else if (targetDir === undefined || targetDir === null || targetDir.length === 0) {
-        msgbox.errorBox("无效的目标文件路径");
+        msgbox.errorBox(langUtil.getTranslation('Code_InvalidTargetDirectory'));
         return;
     }
     var targetDirStat = fs.statSync(targetDir);
     if (!targetDirStat.isDirectory()) {
-        msgbox.errorBox("目标文件路径不是合法的路径");
+        msgbox.errorBox(langUtil.getTranslation('Code_InvalidTargetDirectory'));
         return;
     }
 
@@ -183,7 +183,7 @@ $("#start_single_process").click((e) => {
             var sn = sourceName.substring(sourceName.lastIndexOf(path.sep)+1);
             musicId = parseInt(sn.substring(0, sn.indexOf('-')===-1?sn.length:sn.indexOf('-')));
             if (isNaN(musicId)) {
-                msgbox.errorBox("无法从缓存文件名中获取音乐ID.");
+                msgbox.errorBox(langUtil.getTranslation('Code_MusicIDNotFound'));
                 return;
             }
             
@@ -193,7 +193,7 @@ $("#start_single_process").click((e) => {
                 return;
             }
         } else {
-            msgbox.errorBox("无法获取音乐ID，将使用原先的名称作为目标音乐名.");
+            msgbox.errorBox(langUtil.getTranslation('Code_MusicIDNotFoundOriginalNameUsed'));
             target_filename = sourceName.substring(sourceName.lastIndexOf(path.sep) + 1, sourceName.lastIndexOf("."));
         }
 
@@ -202,10 +202,10 @@ $("#start_single_process").click((e) => {
     }
     console.log("target_filename=" + target_filename);
     if (target_filename === null || target_filename === undefined || target_filename.length === 0) {
-        msgbox.errorBox("目标音乐名为空.");
+        msgbox.errorBox(langUtil.getTranslation('Code_EmptyTargetMusicName'));
         return;
     } else if (target_filename.includes(path.sep)) {
-        msgbox.errorBox("目标音乐名包含非法字符.");
+        msgbox.errorBox(langUtil.getTranslation('Code_InvalidSymbolFound'));
         return;
     }
     processSingleFile(sourceName, targetDir + (targetDir.endsWith(path.sep) ? '' : path.sep) + target_filename+".mp3");
@@ -218,7 +218,7 @@ $("#start_single_process").click((e) => {
  */
 function getMusicNameByRule(musicId, rule, sourceName, targetDir, type) {
     if (rule === undefined || rule === null || rule.length === 0) {
-        logger.error("命名规则为空", type);
+        logger.error(langUtil.getTranslation('Code_NamingRuleNotAssigned'), type);
         return '';
     }
     if (!rule.includes('%%')) {
@@ -232,9 +232,9 @@ function getMusicNameByRule(musicId, rule, sourceName, targetDir, type) {
     ipcRenderer.once('get-meta-info-response-'+musicId, (event, arg) => {
         console.log(arg);
         if (arg === 'net::ERR_INTERNET_DISCONNECTED') {
-            logger.error('网络无法连接', type);
+            logger.error(langUtil.getTranslation('Code_NetworkUnavailable'), type);
         } else if (arg.startsWith('net')) {
-            logger.error('网络错误:' + arg, type);
+            logger.error(langUtil.getTranslation('Code_NetworkErrorPrefix') + arg, type);
         } else {
             // 获取成功，调用解析器
             parseMusicInfo(arg, rule, sourceName, targetDir, type);
@@ -251,11 +251,11 @@ function parseMusicInfo(response, rule, sourceName, targetDir, type) {
     try {
         var responseObj = JSON.parse(response);
     } catch (e) {
-        logger.error('无法解析音乐信息.', type)
+        logger.error(langUtil.getTranslation('Code_ParseMusicInfoError'), type)
         return;
     }
     if (responseObj.code !== 200 || responseObj.songs.length === 0) {
-        logger.error('无法获取音乐信息.', type);
+        logger.error(langUtil.getTranslation('Code_GetMusicInfoFailure'), type);
         return;
     }
     var info = responseObj['songs'][0];
@@ -305,7 +305,7 @@ function parseMusicInfo(response, rule, sourceName, targetDir, type) {
         'company='+info['album']['company'], 'track='+info['no'], 
         'disc='+info['disc'].includes('/') ? info['disc'].substring(0, info['disc'].indexOf('/')) : info['disc']);
     if (type === 'batch') {
-        logger.info('获取到的音乐名:'+targetFilename+"("+getFilenameFromFullPath(sourceName)+")", type);
+        logger.info(langUtil.getTranslation('Code_MusicNameParsed')+targetFilename+"("+getFilenameFromFullPath(sourceName)+")", type);
     }
 
     processSingleFile(sourceName, targetDir + (targetDir.endsWith(path.sep) ? '' : path.sep) + targetFilename+".mp3", type);
@@ -333,7 +333,7 @@ function processSingleFile(sourceName, destinationName, type) {
     try {
         data = fs.readFileSync(sourceName);
     } catch (e) {
-        logger.error("读取音乐缓存文件出错:"+e.message, type);
+        logger.error(langUtil.getTranslation('Code_ReadMusicCacheFailure')+e.message, type);
         return;
     }
     for (var i = 0; i < data.length; i++) {
@@ -342,10 +342,10 @@ function processSingleFile(sourceName, destinationName, type) {
     try {
         fs.writeFileSync(destinationName, data);
     } catch (e) {
-        logger.error("写入音乐文件出错:" + e.message, type);
+        logger.error(langUtil.getTranslation('Code_WriteMusicCacheFailure') + e.message, type);
         return;
     }
-    logger.primary('音乐转换完成.('+getFilenameFromFullPath(sourceName)+" --> "+getFilenameFromFullPath(destinationName)+")", type);
+    logger.primary(langUtil.getTranslation('Code_DecodeFinished')+'('+getFilenameFromFullPath(sourceName)+" --> "+getFilenameFromFullPath(destinationName)+")", type);
 }
 
 function getFilenameFromFullPath(ppath) {
