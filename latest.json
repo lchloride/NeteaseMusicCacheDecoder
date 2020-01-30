@@ -10,9 +10,9 @@
         "linux": "https://github.com/lchloride/NeteaseMusicCacheDecoder/releases/download/v3.2.0/NeteaseMusicCacheDecoder-3.2.0-mac.zip"
     },
     "md5": {
-        "win": "7d1b365fb364e143adfb3607defc894f",
-        "darwin": "45d7dada4b8ac20ad5d19533b0ae3b77",
-        "linux": "45d7dada4b8ac20ad5d19533b0ae3b77"
+        "win": "7a081b7f1c08ca19005de72269318ad5",
+        "darwin": "982519c1891addc5530f9a23c0f28e79",
+        "linux": "982519c1891addc5530f9a23c0f28e79"
     },
     "default_name": {
         "win": "NeteaseMusicCacheDecoder-3.2.0-win.zip",
