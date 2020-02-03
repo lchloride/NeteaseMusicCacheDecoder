@@ -1,3 +1,9 @@
+const NodeID3 = nodeRequire('node-id3');
+var NodeAES = nodeRequire('aes-js');
+var pkcs7 = nodeRequire('pkcs7');
+const getMP3Duration = nodeRequire('get-mp3-duration');
+const uuidv4 = nodeRequire('uuid/v4');
+
 var musicInfo = undefined;
 
 (function ($, undefined) {
@@ -56,7 +62,7 @@ $("#cache_file_selection_btn").click((e) => {
 var dialogLock = 0;
 function getSelectedFileByDialog(options, callback) {
     ipcRenderer.removeAllListeners('selected-file');
-    
+
     // notify main thread to open file dialog
     ipcRenderer.send("open-file-dialog", options);
 
@@ -180,13 +186,13 @@ $("#start_single_process").click((e) => {
         var musicId = 0;
         var re = /\d+/;
         if (sourceName.includes('-') || re.test(getFilenameFromFullPath(sourceName))) {
-            var sn = sourceName.substring(sourceName.lastIndexOf(path.sep)+1);
-            musicId = parseInt(sn.substring(0, sn.indexOf('-')===-1?sn.length:sn.indexOf('-')));
+            var sn = sourceName.substring(sourceName.lastIndexOf(path.sep) + 1);
+            musicId = parseInt(sn.substring(0, sn.indexOf('-') === -1 ? sn.length : sn.indexOf('-')));
             if (isNaN(musicId)) {
                 msgbox.errorBox(langUtil.getTranslation('Code_MusicIDNotFound'));
                 return;
             }
-            
+
             target_filename = getMusicNameByRule(musicId, rule, sourceName, targetDir);
             if (target_filename === null) {
                 // Auto renaming processing is at callback of ipcRender
@@ -208,7 +214,7 @@ $("#start_single_process").click((e) => {
         msgbox.errorBox(langUtil.getTranslation('Code_InvalidSymbolFound'));
         return;
     }
-    processSingleFile(sourceName, targetDir + (targetDir.endsWith(path.sep) ? '' : path.sep) + target_filename+".mp3");
+    processSingleFile(sourceName, targetDir + (targetDir.endsWith(path.sep) ? '' : path.sep) + target_filename + ".mp3");
 
 })
 
@@ -229,7 +235,7 @@ function getMusicNameByRule(musicId, rule, sourceName, targetDir, type) {
     /**
      * Receive music meta info
      */
-    ipcRenderer.once('get-meta-info-response-'+musicId, (event, arg) => {
+    ipcRenderer.once('get-meta-info-response-' + musicId, (event, arg) => {
         console.log(arg);
         if (arg === 'net::ERR_INTERNET_DISCONNECTED') {
             logger.error(langUtil.getTranslation('Code_NetworkUnavailable'), type);
@@ -260,15 +266,16 @@ function parseMusicInfo(response, rule, sourceName, targetDir, type) {
     }
     var info = responseObj['songs'][0];
     var targetFilename = rule;
+    console.log(info);
 
     // Artists replacement
     var artists = '';
     var i = 0;
     if (info["artists"] !== undefined && info["artists"] !== null && info['artists'].length > 0) {
-        for (i=0; i<info['artists'].length; i++) {
+        for (i = 0; i < info['artists'].length; i++) {
             artists += info['artists'][i]['name'] + ",";
         }
-        artists = artists.substring(0, artists.length-1);
+        artists = artists.substring(0, artists.length - 1);
         targetFilename = replaceAll(targetFilename, '%%Artists%%', artists);
     } else {
         targetFilename = replaceAll(targetFilename, '%%Artists%%', '');
@@ -278,37 +285,41 @@ function parseMusicInfo(response, rule, sourceName, targetDir, type) {
     // Album replacement
     try {
         targetFilename = replaceAll(targetFilename, '%%Album%%', info['album']['name']);
-    } catch (e) {}
+    } catch (e) { }
     // MusicId replacement
     targetFilename = replaceAll(targetFilename, '%%MusicID%%', info['id']);
     // Alias replacement
     var alias = '';
     if (info['alias'] !== undefined && info['alias'] !== null && info['alias'].length > 0) {
-        for (i=0; i<info['alias'].length; i++) {
+        for (i = 0; i < info['alias'].length; i++) {
             alias += info['alias'][i] + ",";
         }
-        alias = alias.substring(0, alias.length-1);
-        targetFilename = replaceAll(targetFilename, '%%Alias%%', '('+alias+')');
+        alias = alias.substring(0, alias.length - 1);
+        targetFilename = replaceAll(targetFilename, '%%Alias%%', '(' + alias + ')');
     } else {
         targetFilename = replaceAll(targetFilename, '%%Alias%%', '');
     }
     // Company repalcement
     try {
-    targetFilename = replaceAll(targetFilename, '%%Company%%', info['album']['company']);
-    } catch (e) {}
+        targetFilename = replaceAll(targetFilename, '%%Company%%', info['album']['company']);
+    } catch (e) { }
     // Track replacement
     targetFilename = replaceAll(targetFilename, '%%Track%%', info['no']);
     // Disc replacement
     targetFilename = replaceAll(targetFilename, '%%Disc%%', info['disc'].includes('/') ? info['disc'].substring(0, info['disc'].indexOf('/')) : info['disc']);
+    // Solve the issue that the filename containing slash
+    targetFilename = targetFilename.replace(/\//g, '\uff0f');
 
-    console.log(targetFilename, 'artists='+artists, 'song='+info['name'], 'album='+info['album']['name'], 'musicId='+info['id'], 'alias='+alias, 
-        'company='+info['album']['company'], 'track='+info['no'], 
-        'disc='+info['disc'].includes('/') ? info['disc'].substring(0, info['disc'].indexOf('/')) : info['disc']);
+    console.log(targetFilename, 'artists=' + artists, 'song=' + info['name'], 'album=' + info['album']['name'], 'musicId=' + info['id'], 'alias=' + alias,
+        'company=' + info['album']['company'], 'track=' + info['no'],
+        'disc=' + info['disc'].includes('/') ? info['disc'].substring(0, info['disc'].indexOf('/')) : info['disc']);
     if (type === 'batch') {
-        logger.info(langUtil.getTranslation('Code_MusicNameParsed')+targetFilename+"("+getFilenameFromFullPath(sourceName)+")", type);
+        logger.info(langUtil.getTranslation('Code_MusicNameParsed') + targetFilename + "(" + getFilenameFromFullPath(sourceName) + ")", type);
     }
 
-    processSingleFile(sourceName, targetDir + (targetDir.endsWith(path.sep) ? '' : path.sep) + targetFilename+".mp3", type);
+    processSingleFile(sourceName, targetDir + (targetDir.endsWith(path.sep) ? '' : path.sep) + targetFilename + ".mp3", type);
+
+    writeNewMp3Tags(targetDir + (targetDir.endsWith(path.sep) ? '' : path.sep) + targetFilename + ".mp3", info, type);
 }
 
 function replaceAll(str, before, after) {
@@ -333,7 +344,7 @@ function processSingleFile(sourceName, destinationName, type) {
     try {
         data = fs.readFileSync(sourceName);
     } catch (e) {
-        logger.error(langUtil.getTranslation('Code_ReadMusicCacheFailure')+e.message, type);
+        logger.error(langUtil.getTranslation('Code_ReadMusicCacheFailure') + e.message, type);
         return;
     }
     for (var i = 0; i < data.length; i++) {
@@ -345,14 +356,158 @@ function processSingleFile(sourceName, destinationName, type) {
         logger.error(langUtil.getTranslation('Code_WriteMusicCacheFailure') + e.message, type);
         return;
     }
-    logger.primary(langUtil.getTranslation('Code_DecodeFinished')+'('+getFilenameFromFullPath(sourceName)+" --> "+getFilenameFromFullPath(destinationName)+")", type);
+    logger.primary(langUtil.getTranslation('Code_DecodeFinished') + '(' + getFilenameFromFullPath(sourceName) + " --> " + getFilenameFromFullPath(destinationName) + ")", type);
+}
+
+/**
+ * Parse music information and write music tags to music
+ * @param {String} destinationName target filename
+ * @param {Object} info music information object
+ * @param {String} type Single or Batch
+ */
+function writeNewMp3Tags(destinationName, info, type) {
+    if (!(info instanceof Object)) {
+        return;
+    }
+    let tags = {};
+    // Artist(s), use "/" to seperate with each other
+    if (info['artists'] !== undefined && info['artists'] !== null) {
+        let artists = '';
+        for (a in info['artists']) {
+            artists += info['artists'][a]['name'] + '/';
+        }
+        if (artists.length > 0) {
+            artists = artists.substring(0, artists.length-1);
+        }
+        tags['artist'] = artists;
+    }
+    // Album
+    if (info['album'] !== undefined && info['album'] !== null &&
+        info['album']['name'] !== undefined && info['album']['name'] !== null) {
+        tags['album'] = info['album']['name'];
+    }
+    // TrackNumber
+    if (info['no'] !== undefined && info['no'] !== null) {
+        tags['trackNumber'] = '' + info['no'];
+    }
+    // Title
+    if (info['name'] !== undefined && info['name'] !== null) {
+        tags['title'] = info['name'];
+    }
+    // copyright
+    if (info['album'] !== undefined && info['album'] !== null && 
+        info['album']['company'] !== undefined && info['album']['company'] !== null) {
+        tags['copyright'] = info['album']['company'];
+    }
+    // Comments
+    let meta = {};
+    meta['album'] = info['album']['name'];
+    meta['albumId'] = info['album']['id'];
+    meta['albumPic'] = info['album']['picUrl'].replace('http://', 'https://');
+    if ('pic' in info['album']) {
+        meta['albumPicDocId'] = info['album']['pic'];
+    } else {
+        meta['albumPicDocId'] = /\/(\d+)\.\w+$/g.exec(info['album']['picUrl'])[1]
+    }
+    if ('alias' in info) {
+        meta['alias'] = info['alias'];
+    } else {
+        meta['alias'] = [];
+    }
+    meta['artist'] = []
+    for (a in info['artists']) {
+        meta['artist'].push([info['artists'][a]['name'], info['artists'][a]['id']]);
+    }
+    meta['musicId'] = info['id'];
+    meta['musicName'] = info['name'];
+    if ('mvId' in info) {
+        meta['mvId'] = info['mvId'];
+    } else {
+        meta['mvId'] = 0;
+    }
+    meta['transNames'] = [];
+    meta['format'] = 'mp3';
+
+    if ('hMusic' in info && 'mMusic' in info && 'lMusic' in info && 'bMusic' in info) {
+        let stats = fs.statSync(destinationName);
+        let hMusicSizeDiff = Math.abs(info['hMusic']['size'] - stats.size);
+        let mMusicSizeDiff = Math.abs(info['mMusic']['size'] - stats.size);
+        let lMusicSizeDiff = Math.abs(info['lMusic']['size'] - stats.size);
+        let bMusicSizeDiff = Math.abs(info['bMusic']['size'] - stats.size);
+        let sizeDiffMin = Math.min(hMusicSizeDiff, mMusicSizeDiff, lMusicSizeDiff, bMusicSizeDiff);
+        if (sizeDiffMin == hMusicSizeDiff) {
+            meta['bitrate'] = info['hMusic']['bitrate'];
+        } else if (sizeDiffMin == mMusicSizeDiff) {
+            meta['bitrate'] = info['mMusic']['bitrate'];
+        } else if (sizeDiffMin == lMusicSizeDiff) {
+            meta['bitrate'] = info['lMusic']['bitrate'];
+        } else {
+            meta['bitrate'] = info['bMusic']['bitrate'];
+        }
+    }
+
+    let music = fs.readFileSync(destinationName);
+    const duration = getMP3Duration(music);
+
+    meta['duration'] = duration;// Math.floor(duration-26);
+    meta['mp3DocId'] = crypto.createHash('md5').update(music).digest('hex');
+
+    let key = Buffer.from('2331346C6A6B5F215C5D2630553C2728', 'hex');
+    // let text = 'music:{"album": "Resident Evil: Retribution", "albumId": 2554307, "albumPic": "https://p2.music.126.net/AbuUyyxsMr3Xe1LAW6VtJw==/5518448859903100.jpg", "albumPicDocId": 5518448859903100, "alias": [], "artist": [["Tomandandy", 102831]], "musicId": 26758602, "musicName": "Flying Through the Air", "mvId": 0, "transNames": [], "format": "mp3", "bitrate": 128000, "duration": 228336, "mp3DocId": "d986d29068bfe0a46869e5887865df28"}';
+    let text = 'music:' + JSON.stringify(meta);//.replace(/":/g, '": ').replace(/",/g, '", ').replace(/,"/g, ', "');
+    console.log(text);
+    let textBytes = NodeAES.utils.utf8.toBytes(text);
+    let textBytesPad = pkcs7.pad(textBytes);
+    let aesEcb = new NodeAES.ModeOfOperation.ecb(key);
+    let identification = '163 key(Don\'t modify):' + Buffer.from(aesEcb.encrypt(textBytesPad)).toString('base64');
+
+    console.log(identification);
+
+    tags['comment'] = {};
+    tags['comment']['language'] = 'XXX';
+    tags['comment']['text'] = identification;
+
+    // Cover
+    if (info['album'] !== undefined && info['album'] !== null) {
+        if (info['album']['picUrl'] !== undefined && info['album']['picUrl'] !== null) {
+            let uuid = uuidv4();
+            ipcRenderer.send('get-latest-version-file', { url: info['album']['picUrl'], uuid: uuid });
+            ipcRenderer.once('get-latest-version-file-response'+uuid, (event, body) => {
+                if (body === 'net::ERR_INTERNET_DISCONNECTED') {
+                    logger.error(langUtil.getTranslation('Code_CoverImageError') + ' - ' + langUtil.getTranslation('Code_NetworkUnavailable'), type);
+                } else if (body === 'net::ERR_CONNECTION_REFUSED') {
+                    logger.error(langUtil.getTranslation('Code_CoverImageError') + ' - ' + langUtil.getTranslation('Code_ConnectionRefused'), type);
+                } else if (body instanceof String && body.startsWith('net::')) {
+                    logger.error(langUtil.getTranslation('Code_CoverImageError') + ' - ' + body, type);
+                } else {
+                    console.log('Downloaded cover image size = ' + body.length);
+                    tags['image'] = {};
+                    if (body.slice(0, 4).equals(Buffer.from('89504E47'))) {
+                        tags['image']['mine'] = 'image/png';
+                    } else {
+                        tags['image']['mine'] = 'image/jpg';
+                    }
+                    tags['image']['imageBuffer'] = body;
+                    tags['image']['type'] = { id: 3, name: "front cover" };
+                }
+
+                // Write to mp3
+                if (NodeID3.update(tags, destinationName)) {
+                    logger.primary(langUtil.getTranslation('Code_MetaDataWritten')+': '+destinationName, type);
+                } else {
+                    logger.error(langUtil.getTranslation('Code_MetaDataWrittenError')+': '+destinationName, type);
+                }
+            });
+        }
+    }
+
 }
 
 function getFilenameFromFullPath(ppath) {
     if (ppath === undefined || ppath === null || ppath.length === 0)
         return ppath;
     else
-        return ppath.substring(ppath.lastIndexOf(path.sep)+1);
+        return ppath.substring(ppath.lastIndexOf(path.sep) + 1);
 }
 
 

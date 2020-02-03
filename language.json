@@ -1,6 +1,6 @@
 {
     "zh_cn": {
-        "Title": "网易云音乐缓存解码器 v3.2",
+        "Title": "网易云音乐缓存解码器 v3.3",
         "Menu_Batch": "批量处理",
         "Menu_Single": "单文件处理",
         "Menu_About": "关于",
@@ -77,10 +77,13 @@
         "Code_FailedToGetMusicId": "无法从缓存文件名中获取音乐ID.",
         "Code_FailedToGetMusicIdUsingOriginalName": "无法获取音乐ID，将使用原先的名称作为目标音乐名.",
         "Code_ReadSettingFailure": "读取配置文件出错:",
-        "Text_CheckUpdate": "手动检查更新"
+        "Text_CheckUpdate": "手动检查更新",
+        "Code_MetaDataWritten": "音乐信息写入完成",
+        "Code_MetaDataWrittenError": "音乐信息写入失败",
+        "Code_CoverImageError": "获取专辑封面失败"
     },
     "en": {
-        "Title": "Netease Music Cache Decoder v3.2",
+        "Title": "Netease Music Cache Decoder v3.3",
         "Menu_Batch": "Batch Processing",
         "Menu_Single": "Single File",
         "Menu_About": "About",
@@ -158,7 +161,10 @@
         "Code_FailedToGetMusicId": "Failed to get music ID from cache name",
         "Code_FailedToGetMusicIdUsingOriginalName": "Failed to get music ID, original name will be used as file name.",
         "Code_ReadSettingFailure": "Failed to read settings.json:",
-        "Text_CheckUpdate": "Check update manually"
+        "Text_CheckUpdate": "Check update manually",
+        "Code_MetaDataWritten": "Music information is written.",
+        "Code_MetaDataWrittenError": "Failed to write music information.",
+        "Code_CoverImageError": "Failed to get cover image."
     },
     "jp": {
         "Name": "網易雲音楽"

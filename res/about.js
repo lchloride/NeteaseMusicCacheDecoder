@@ -45,7 +45,7 @@ function checkUpdate(isManually) {
             $('#update_version').text(obj['version']);
             $('#update_level').text(getLevelDesc((obj['level'])));
             $('#update_date').text(obj['release_date']);
-            $('#update_info').text(obj['info']['zh_cn']);
+            $('#update_info').html(obj['info']['zh_cn'].replace(/<script>.*<\/script>/g, ''));
             $('#about_label').removeClass('label-danger label-warning label-info');
             if (obj['level'] === 'primary') {
                 $('#about_label').css('display', 'inline').addClass('label-danger');
@@ -111,8 +111,9 @@ function updateProgram(default_name, url, platform) {
         if (filename === undefined || filename === null || filename.length === 0) {
             return;
         }
-        ipcRenderer.send('get-latest-version-file', url);
-        ipcRenderer.once('get-latest-version-file-response', (event, body) => {
+        let uuid = uuidv4();
+        ipcRenderer.send('get-latest-version-file', { url: url, uuid: uuid });
+        ipcRenderer.once('get-latest-version-file-response'+uuid, (event, body) => {
             console.log('Downloaded body size = '+body.length);
             $('#download_progress').text(langUtil.getTranslation('Code_Progress') + '100%');
             $('#download_progressbar').css('width',  '100%');

@@ -1,6 +1,6 @@
 "use strict"
 const { app, BrowserWindow, ipcMain, dialog, Menu } = require('electron')
-const title = "网易云音乐缓存解码器 v3.2";
+const title = "网易云音乐缓存解码器 v3.3";
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -179,12 +179,12 @@ ipcMain.on('get-latest-version-info', (event) => {
 
 ipcMain.on('get-latest-version-file', (event, arg) => {
     const { net } = require('electron')
-    const request = net.request(arg);
+    const request = net.request(arg.url);
     console.log('On lastest version file')
 
     request.on('error', (error) => {
         console.log(error.message);
-        event.sender.send('get-latest-version-file-response', error.message);
+        event.sender.send('get-latest-version-file-response'+arg.uuid, error.message);
     });
     request.on('response', (response) => {
         console.log(`STATUS: ${response.statusCode}`)
@@ -201,7 +201,7 @@ ipcMain.on('get-latest-version-file', (event, arg) => {
         })
         response.on('end', () => {
             console.log('No more data in response. total length='+total, body.length);
-            event.sender.send('get-latest-version-file-response', body);
+            event.sender.send('get-latest-version-file-response'+arg.uuid, body);
         })
     })
 

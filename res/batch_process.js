@@ -204,7 +204,6 @@ $("#bstart_batch_process").click((e) => {
             continue;
         }
         processSingleFile(sourceName, targetDir + (targetDir.endsWith(path.sep) ? '' : path.sep) + target_filename + ".mp3", 'batch');
-
     }
 
 })
