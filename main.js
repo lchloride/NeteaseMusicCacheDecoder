@@ -1,6 +1,6 @@
 "use strict"
 const { app, BrowserWindow, ipcMain, dialog, Menu } = require('electron')
-const title = "网易云音乐缓存解码器 v3.3";
+const title = "网易云音乐缓存解码器 v3.4";
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -9,7 +9,7 @@ let win
 function createWindow() {
     // Create the browser window.
     win = new BrowserWindow({
-        width: 960,
+        width: 1000,
         height: 720,
         minWidth: 800, 
         minHeight: 600,

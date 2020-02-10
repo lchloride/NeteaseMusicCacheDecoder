@@ -3,8 +3,9 @@
 
 <head>
     <meta charset="UTF-8">
-    <title data-lang="Title">网易云音乐缓存解码器 v3.3</title>
+    <title data-lang="Title">网易云音乐缓存解码器 v3.4</title>
     <link rel="stylesheet" href="./res/bootstrap.min.css">
+    <link rel="stylesheet" href="./res/DataTables/datatables.min.css">
     <script>
         window.nodeRequire = require;
         delete window.require;
@@ -15,8 +16,8 @@
         const os = window.nodeRequire("os");
         const crypto = window.nodeRequire("crypto");
         const { ipcRenderer, remote } = window.nodeRequire("electron");
-        const title = "网易云音乐缓存解码器 v3.3";
-        const version = "3.3.0";
+        const title = "网易云音乐缓存解码器 v3.4";
+        const version = "3.4.0";
     </script>
     <script src="./res/alert.js"></script>
     <script src="./res/settings.js"></script>
@@ -172,7 +173,30 @@
 
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10">
-                            <button class="btn btn-default" id="bstart_batch_process" type="button" data-lang="Text_StartConvertion">开始转换</button>
+                            <button class="btn btn-default" id="bstart_batch_process" type="button" data-lang="Text_StartConvertion">转换全部</button>
+                            <button class="btn btn-info" id="bcheck_batch" type="button" data-lang="Text_StartScan">扫描缓存文件</button>
+                            <span id="text_scaning" data-lang="Text_Scaning" style="display: none;">扫描中</span>
+                        </div>
+                    </div>
+
+                    
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10" id="table_wrapper" style="display: none;">
+                            <hr style="margin: 0 10px;"/>
+                            <h4 data-lang="Text_ScannedCache">找到的缓存文件</h4>
+                            <table class="table" id="scan_table">
+                                <thead class="thead-light">
+                                  <tr>
+                                    <th scope="col" data-lang="Table_TitleNo">编号</th>
+                                    <th scope="col" data-lang="Table_TitleFilename">文件名</th>
+                                    <th scope="col" data-lang="Table_TitleArtist">艺术家</th>
+                                    <th scope="col" data-lang="Table_TitleTitle">标题</th>
+                                    <th scope="col" data-lang="Table_TitleOperation">操作</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                              </table>
                         </div>
                     </div>
 
@@ -296,7 +320,7 @@
 
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10">
-                            <button class="btn btn-default" id="start_single_process" type="button" data-lang="Text_StartConvertion">开始转换</button>
+                            <button class="btn btn-default" id="start_single_process" type="button" data-lang="Text_StartConvertionSingle">转换文件</button>
                         </div>
                     </div>
                 </form>
@@ -308,10 +332,10 @@
                         <img src="./res/163MusicCacheDecoder.png" class="media-object" style="width:60px">
                     </div>
                     <div class="media-body">
-                        <h4 class="media-heading">网易云音乐缓存解码器 Netease Music Cache Decoder v3.3</h4>
+                        <h4 class="media-heading">网易云音乐缓存解码器 Netease Music Cache Decoder v3.4</h4>
                         <p>Github: https://github.com/lchloride/NeteaseMusicCacheDecoder
                         </p>
-                        <p data-lang="Text_Copyright">Copyright @ lchloride, 2017-2019, MIT License</p>
+                        <p data-lang="Text_Copyright">Copyright @ lchloride, 2017-2020, MIT License</p>
                         <p data-lang="Text_BuiltBy">Built by Electron with Node.js</p>
                     </div>
                 </div>
@@ -371,11 +395,28 @@
     <script src="./res/jquery.min.js"></script>
     <script src="./res/bootstrap.min.js"></script>
     <script src="./res/lang.js"></script>
+    <script src="./res/DataTables/datatables.min.js"></script>
     <script src="./res/single_process.js"></script>
     <script src="./res/batch_process.js"></script>
     <script src="./res/about.js"></script>
 
-
+    <textarea id="table_template" style="display: none;">
+        <hr style="margin: 0 10px;"/>
+        <h4 data-lang="Text_ScannedCache">找到的缓存文件</h4>
+        <table class="table" id="scan_table">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col" data-lang="Table_TitleNo">编号</th>
+                <th scope="col" data-lang="Table_TitleFilename">文件名</th>
+                <th scope="col" data-lang="Table_TitleArtist">艺术家</th>
+                <th scope="col" data-lang="Table_TitleTitle">标题</th>
+                <th scope="col" data-lang="Table_TitleOperation">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+    </textarea>
 </body>
 
 </html>

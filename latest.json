@@ -1,23 +1,23 @@
 {
-    "version": "3.3.0",
+    "version": "3.4.0",
     "info": {
-        "zh_cn": "1. 自动获取音乐名称的时候同步更新音乐元数据；<br/>2. 通过自动获取名称的音乐可以被网易云音乐识别为已下载音乐；<br/>3. 解决音乐名称中包含特殊字符的情况"
+        "zh_cn": "1. 新增功能：批量转换中可以扫描路径下的缓存文件，只转换需要的文件"
     },
     "level": "primary",
     "url": {
-        "win": "https://github.com/lchloride/NeteaseMusicCacheDecoder/releases/download/v3.3.0/NeteaseMusicCacheDecoder-3.3.0-win.zip",
-        "darwin": "https://github.com/lchloride/NeteaseMusicCacheDecoder/releases/download/v3.3.0/NeteaseMusicCacheDecoder-3.3.0-mac.zip",
-        "linux": "https://github.com/lchloride/NeteaseMusicCacheDecoder/releases/download/v3.3.0/NeteaseMusicCacheDecoder-3.3.0-mac.zip"
+        "win": "https://github.com/lchloride/NeteaseMusicCacheDecoder/releases/download/v3.4.0/NeteaseMusicCacheDecoder-3.4.0-win.zip",
+        "darwin": "https://github.com/lchloride/NeteaseMusicCacheDecoder/releases/download/v3.4.0/NeteaseMusicCacheDecoder-3.4.0-mac.zip",
+        "linux": "https://github.com/lchloride/NeteaseMusicCacheDecoder/releases/download/v3.4.0/NeteaseMusicCacheDecoder-3.4.0-mac.zip"
     },
     "md5": {
-        "win": "342c6d3df5c89031c63b7763cc43200c",
-        "darwin": "8bea1a95fd3511cdeb69c8b1e9319db1",
-        "linux": "8bea1a95fd3511cdeb69c8b1e9319db1"
+        "win": "f5741e31ef8ff60c77471ef610461d8c",
+        "darwin": "0bb283c09b04411d6008e775520b17e7",
+        "linux": "0bb283c09b04411d6008e775520b17e7"
     },
     "default_name": {
-        "win": "NeteaseMusicCacheDecoder-3.3.0-win.zip",
-        "darwin": "NeteaseMusicCacheDecoder-3.3.0-mac.zip",
-        "linux": "NeteaseMusicCacheDecoder-3.3.0-mac.zip"
+        "win": "NeteaseMusicCacheDecoder-3.4.0-win.zip",
+        "darwin": "NeteaseMusicCacheDecoder-3.4.0-mac.zip",
+        "linux": "NeteaseMusicCacheDecoder-3.4.0-mac.zip"
     },
-    "release_date": "2020-02-03"
+    "release_date": "2020-02-10"
 }

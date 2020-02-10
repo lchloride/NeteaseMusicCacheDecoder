@@ -151,9 +151,21 @@ $('#auto_obtain_target_filename').change((event) => {
  * Callback when start_single_process clicked.
  * Start to parse single file
  */
-$("#start_single_process").click((e) => {
-    var btn = $(e.target);
-    var sourceName = $("#cache_file").val();
+$("#start_single_process").click(startSingleProcess);
+
+/**
+ * Callback when start_single_process clicked OR part of batch is clicked
+ * @param {Event} e click event
+ * @param {String} sourceName source name, if assigned, this will be used instand of input
+ */
+function startSingleProcess(e, sourceName)
+{
+    var targetDir = $("#target_dir").val();
+    var isTargetDirUsingCache = $("#btarget_dir_using_cache").is(":checked");
+    if (sourceName === undefined) {
+        sourceName = $("#cache_file").val();
+        isTargetDirUsingCache = $("#target_dir_using_cache").is(":checked");
+    }
     if (sourceName === undefined || sourceName === null || sourceName.length === 0) {
         msgbox.errorBox(langUtil.getTranslation('Code_InvalidFileName'));
         return;
@@ -165,8 +177,6 @@ $("#start_single_process").click((e) => {
         }
     }
 
-    var targetDir = $("#target_dir").val();
-    var isTargetDirUsingCache = $("#target_dir_using_cache").is(":checked");
     if (isTargetDirUsingCache) {
         targetDir = sourceName.substring(0, sourceName.lastIndexOf(path.sep) + 1);
     } else if (targetDir === undefined || targetDir === null || targetDir.length === 0) {
@@ -216,7 +226,7 @@ $("#start_single_process").click((e) => {
     }
     processSingleFile(sourceName, targetDir + (targetDir.endsWith(path.sep) ? '' : path.sep) + target_filename + ".mp3");
 
-})
+}
 
 /**
  * Obtain music name by specific rule

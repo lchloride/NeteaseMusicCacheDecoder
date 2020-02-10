@@ -13,7 +13,7 @@ var langUtil = {
     isLoaded: false,
     init: function () {
         let langJson = fs.readFileSync(app.getAppPath() + path.sep + "language.json");
-        try{
+        try {
             var langObj = this.langObj = JSON.parse(langJson);
         } catch (e) {
             msgbox.errorBox(langUtil.getTranslation("Error_LanguageResourceNotFound"));
@@ -26,6 +26,15 @@ var langUtil = {
             return;
         }
         this.refreshpage();
+    },
+    getCurLang: function () {
+        var langObj = this.langObj;
+        let lang = settings.getSetting("lang");
+
+        if (lang === undefined || lang === null || langObj[lang] === null || langObj[lang] === undefined) {
+            lang = "zh_cn";
+        }
+        return lang;
     },
     getTranslation: function (key, lang) {
         var langObj = this.langObj;
@@ -41,7 +50,7 @@ var langUtil = {
         }
         return translation;
     },
-    refreshpage: function() {
+    refreshpage: function () {
         var langObj = this.langObj;
         $.each($("[data-lang]"), function (index, value) {
             let langSetting = value.dataset.lang;
@@ -49,7 +58,7 @@ var langUtil = {
             let key = '';
             if (langSetting.indexOf(':') >= 0) {
                 attr = langSetting.substring(0, langSetting.indexOf(':'));
-                key = langSetting.substring(langSetting.indexOf(':')+1);
+                key = langSetting.substring(langSetting.indexOf(':') + 1);
             } else {
                 key = langSetting;
             }
@@ -74,12 +83,31 @@ var langUtil = {
     }
 };
 
-$(function() {
+$(function () {
     langUtil.init();
     $('#lang_selector').change((ev) => {
         let lang = $(ev.target).val();
         settings.setSetting('lang', lang);
         settings.write();
+        if (table !== undefined && table !== null) {
+            let data = table.context[0].oInit.data;
+            table.destroy();
+            table = null;
+            $('#table_wrapper').html($('#table_template').val());
+            table = $('#scan_table').on('draw.dt', tableCallBack)
+                .on('init.dt', tableCallBack)
+                .DataTable({
+                    data: data,
+                    columns: [
+                        { data: 'no' },
+                        { data: 'filenameD' },
+                        { data: 'artist' },
+                        { data: 'title' },
+                        { data: 'operation', "orderable": false }
+                    ],
+                    language: tableLanguage[langUtil.getCurLang()]
+                });
+        }
         langUtil.refreshpage();
     });
 });

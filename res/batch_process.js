@@ -1,3 +1,4 @@
+var table = null;
 
 function getFilesInDir(jsonPath) {
     let jsonFiles = [];
@@ -129,6 +130,52 @@ $('input[type=radio][name=target_filename]').change((event) => {
  * Callback when bstart_batch_process clicked.
  * Start to parse single file
  */
+var tableLanguage = {
+    "zh_cn": {
+        processing:     "处理中...",
+        search:         "搜索:",
+        lengthMenu:    "显示 _MENU_ 项结果",
+        info:           "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+        infoEmpty:      "显示第 0 至 0 项结果，共 0 项",
+        infoFiltered:   "(由 _MAX_ 项结果过滤)",
+        infoPostFix:    "",
+        loadingRecords: "载入中...",
+        zeroRecords:    "没有匹配结果",
+        emptyTable:     "表中数据为空",
+        paginate: {
+            first:      "首页",
+            previous:   "上页",
+            next:       "下页",
+            last:       "末页"
+        },
+        aria: {
+            sortAscending:  ": 以升序排列此列",
+            sortDescending: ": 以降序排列此列"
+        }
+    },
+    "en": {
+        processing:     "Processing...",
+        search:         "Search:",
+        lengthMenu:    "Show _MENU_ entries",
+        info:           "Showing _START_ to _END_ of _TOTAL_ entries",
+        infoEmpty:      "Showing 0 to 0 of 0 entries",
+        infoFiltered:   "(filtered from _MAX_ total entries)",
+        infoPostFix:    "",
+        loadingRecords: "Loading...",
+        zeroRecords:    "Show _MENU_ entries",
+        emptyTable:     "No matching records found",
+        paginate: {
+            first:      "First",
+            previous:   "Previous",
+            next:       "Next",
+            last:       "Last"
+        },
+        aria: {
+            sortAscending:  ": activate to sort column ascending",
+            sortDescending: ": activate to sort column descending"
+        }
+    }
+}
 $("#bstart_batch_process").click((e) => {
     var btn = $(e.target);
     var sourceDir = $("#bcache_dir").val();
@@ -162,7 +209,7 @@ $("#bstart_batch_process").click((e) => {
     for (var i = 0; i < sourceNameList.length; i++) {
         console.log("sourceName=" + sourceNameList[i]);
         var sourceName = sourceNameList[i];
-        if (!sourceName.endsWith('uc') && !sourceName.endsWith('uc!') ) {
+        if (!sourceName.endsWith('uc') && !sourceName.endsWith('uc!')) {
             continue;
         }
 
@@ -175,7 +222,7 @@ $("#bstart_batch_process").click((e) => {
 
             if (sourceName.includes('-') || re.test(getFilenameFromFullPath(sourceName))) {
                 var sn = sourceName.substring(sourceName.lastIndexOf(path.sep) + 1);
-                musicId = parseInt(sn.substring(0, sn.indexOf('-')===-1?sn.length:sn.indexOf('-')));
+                musicId = parseInt(sn.substring(0, sn.indexOf('-') === -1 ? sn.length : sn.indexOf('-')));
                 if (isNaN(musicId)) {
                     logger.error(langUtil.getTranslation('Code_FailedToGetMusicId'), 'batch');
                     continue;
@@ -208,6 +255,182 @@ $("#bstart_batch_process").click((e) => {
 
 })
 
+$('#bcheck_batch').click(async function (ev) {
+    // 找出来batch下的全部缓存文件
+    var sourceDir = $("#bcache_dir").val();
+    if (sourceDir === undefined || sourceDir === null || sourceDir.length === 0) {
+        msgbox.errorBox(langUtil.getTranslation('Hint_InvalidCacheDirectory'));
+        return;
+    } else {
+        var sourceStat = fs.statSync(sourceDir);
+        if (!sourceStat.isDirectory()) {
+            msgbox.errorBox(langUtil.getTranslation('Hint_InvalidCacheDirectory'));
+            return;
+        }
+    }
 
+    $('#text_scaning').show();
+    sourceNameList = getFilesInDir(sourceDir);
+    let sourceObject = [];
 
+    for (let i = 0; i < sourceNameList.length; i++) {
+        console.log("sourceName=" + sourceNameList[i]);
+        var sourceName = sourceNameList[i];
+        if (!sourceName.endsWith('uc') && !sourceName.endsWith('uc!')) {
+            continue;
+        }
 
+        var musicId = 0;
+        var re = /\d+/;
+        let obj = {};
+
+        obj['filename'] = sourceName;
+        obj['filenameD'] = getFilenameFromFullPath(sourceName);
+        obj['artist'] = 'N/A';
+        obj['album'] = 'N/A';
+        obj['title'] = 'N/A';
+
+        if (sourceName.includes('-') || re.test(getFilenameFromFullPath(sourceName))) {
+            var sn = sourceName.substring(sourceName.lastIndexOf(path.sep) + 1);
+            musicId = parseInt(sn.substring(0, sn.indexOf('-') === -1 ? sn.length : sn.indexOf('-')));
+
+            if (isNaN(musicId)) {
+                obj['musicId'] = 'N/A';
+                continue;
+            }
+
+            obj['musicId'] = musicId;
+        } else {
+            obj['musicId'] = 'N/A';
+        }
+        sourceObject.push(obj)
+    }
+
+    for (let i = 0; i < sourceObject.length; i++) {
+        if (sourceObject[i]['musicId'] !== 'N/A') {
+            console.log(sourceObject[i]['musicId']);
+            ipcRenderer.send('get-meta-info', sourceObject[i]['musicId']);
+
+            /**
+             * Receive music meta info
+             */
+            ipcRenderer.once('get-meta-info-response-' + sourceObject[i]['musicId'], (event, arg) => {
+                // console.log(sourceObject[i]['musicId'], arg);
+                sourceObject[i]['status'] = 'OBTAINED';
+                if (arg === 'net::ERR_INTERNET_DISCONNECTED') {
+                    return;
+                } else if (arg.startsWith('net')) {
+                    return;
+                } else {
+                    try {
+                        var responseObj = JSON.parse(arg);
+                    } catch (e) {
+                        console.error(e);
+                        return;
+                    }
+                    if (responseObj.code !== 200 || responseObj.songs.length === 0) {
+                        console.error(responseObj.code, responseObj.songs.length)
+                        return;
+                    }
+                    var info = responseObj['songs'][0];
+                    console.log(info);
+
+                    // Artists replacement
+                    var artists = '';
+                    let j = 0;
+                    if (info["artists"] !== undefined && info["artists"] !== null && info['artists'].length > 0) {
+                        for (j = 0; j < info['artists'].length; j++) {
+                            artists += info['artists'][j]['name'] + ",";
+                        }
+                        artists = artists.substring(0, artists.length - 1);
+                        sourceObject[i]['artist'] = artists;
+                    }
+                    //Song
+                    sourceObject[i]['title'] = info['name'];
+                    // Album replacement
+                    sourceObject[i]['album'] = info['album']['name'];
+                    sourceObject[i]['status'] = 'SET';
+                }
+
+            });
+        } else {
+            sourceObject[i]['status'] = 'INVALID';
+        }
+    }
+
+    let lock = true;
+    let timer = setTimeout(function () {
+        lock = false;
+    }, 30000);
+
+    while (lock) {
+        let flag = true;
+        for (let i = 0; i < sourceObject.length; i++) {
+            if (sourceObject[i]['status'] === undefined || sourceObject[i]['status'] === null) {
+                flag = false;
+                break;
+            }
+        }
+        if (flag) {
+            break;
+        } else {
+            await sleep(500);
+        }
+    }
+
+    clearTimeout(timer);
+
+    console.log(sourceObject);
+
+    if (!lock) {
+        msgbox.errorBox('Wrong status');
+        $('#text_scaning').hide();
+        return;
+    }
+
+    let operationHtml = '<button class="btn btn-link single-convert-btn" data-index="%d" data-lang="Table_ConvertIt" type="button">转换此文件</button>';
+    for (let i = 0; i < sourceObject.length; i++) {
+        sourceObject[i]['no'] = i+1;
+        sourceObject[i]['operation'] = operationHtml.replace('%d', '' + i);
+    }
+
+    // If table exists, destroy it first
+    if (table !== undefined && table !== null) {
+        table.destroy();
+        table = null;
+        $('#table_wrapper').html($('#table_template').val());
+    }
+
+    $('#table_wrapper').show();
+
+    table = $('#scan_table').on('draw.dt', tableCallBack)
+        .on('init.dt', tableCallBack)
+        .DataTable({
+            data: sourceObject,
+            columns: [
+                { data: 'no' },
+                { data: 'filenameD' },
+                { data: 'artist' },
+                { data: 'title' },
+                { data: 'operation', "orderable": false }
+            ],
+            language: tableLanguage[langUtil.getCurLang()]
+        });
+    $('#text_scaning').hide();
+});
+
+function tableCallBack() {
+    $('.single-convert-btn').unbind('click').click((ev) => {
+        let index = parseInt($(ev.target).attr('data-index'));
+        if (table !== undefined && table !== null) {
+            let data = table.data();
+            console.log(index, data[index]);
+            startSingleProcess(null, data[index].filename);
+        }
+    });
+    langUtil.refreshpage();
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
