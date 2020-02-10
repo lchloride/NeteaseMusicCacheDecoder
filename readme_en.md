@@ -52,6 +52,15 @@ Unzip the downloaded package, copy two files(`NeteaseMusicCacheDecoder` and `set
 - Decide renaming methods(Manually wrote/Auto renaming) and rules
 - Click "Decode"
 
+### If there are tons of caches in directory but I only need some of them... 
+
+- Use "Batch Processing" tag
+- Select the directory which contains the cache files to be converted.If the checkbox `Search in the default cache directory` is selected, the default cache directory will be used.
+- Select the target directory to store converted music files
+- Decide renaming methods(Manually wrote/Auto renaming) and rules
+- Click "Scan cache files"
+- Find the music you wanted in the following table, click on "Decode it" to convert it to music file which is saved at target directory
+
 ### Update
 
 - When a new update is available, an "!" mark will appear to the right of the "About" tab. There are some details in the "About" tab page together with the download button.
@@ -110,6 +119,10 @@ Supported meta data:
 - Solve the possible renaming conflict
 
 ## History
+
+### v3.4.0 Convert music you wanted in the directory
+
+- When there are lots of caches in a directory, we can convert some of them by their artists and titles
 
 ### v3.3.0 Auto meta data filling
 
