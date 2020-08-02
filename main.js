@@ -1,6 +1,6 @@
 "use strict"
 const { app, BrowserWindow, ipcMain, dialog, Menu } = require('electron')
-const title = "网易云音乐缓存解码器 v3.4";
+const title = "网易云音乐缓存解码器 v3.4.1";
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.

@@ -425,10 +425,79 @@ function tableCallBack() {
         if (table !== undefined && table !== null) {
             let data = table.data();
             console.log(index, data[index]);
-            startSingleProcess(null, data[index].filename);
+            startBatchOneProcess(data[index].filename);
         }
     });
     langUtil.refreshpage();
+}
+
+/**
+ * 
+ * @param {String} sourceName filename to be converted
+ */
+function startBatchOneProcess(sourceName) {
+    var targetDir = $("#btarget_dir").val();
+    var isTargetDirUsingCache = $("#btarget_dir_using_cache").is(":checked");
+    if (sourceName === undefined || sourceName === null || sourceName.length === 0) {
+        msgbox.errorBox(langUtil.getTranslation('Code_InvalidFileName'));
+        return;
+    } else {
+        var sourceStat = fs.statSync(sourceName);
+        if (!sourceStat.isFile()) {
+            msgbox.errorBox(langUtil.getTranslation('Code_InvalidFileFormat'));
+            return;
+        }
+    }
+
+    if (isTargetDirUsingCache) {
+        targetDir = sourceName.substring(0, sourceName.lastIndexOf(path.sep) + 1);
+    } else if (targetDir === undefined || targetDir === null || targetDir.length === 0) {
+        msgbox.errorBox(langUtil.getTranslation('Code_InvalidTargetDirectory'));
+        return;
+    }
+    var targetDirStat = fs.statSync(targetDir);
+    if (!targetDirStat.isDirectory()) {
+        msgbox.errorBox(langUtil.getTranslation('Code_InvalidTargetDirectory'));
+        return;
+    }
+
+    var target_filename = "";
+    // Auto renamimg
+    if ($("#auto_obtain_target_filename").is(":checked")) {
+        var rule = $("#rename_rule").val();
+        var musicId = 0;
+        var re = /\d+/;
+        if (sourceName.includes('-') || re.test(getFilenameFromFullPath(sourceName))) {
+            var sn = sourceName.substring(sourceName.lastIndexOf(path.sep) + 1);
+            musicId = parseInt(sn.substring(0, sn.indexOf('-') === -1 ? sn.length : sn.indexOf('-')));
+            if (isNaN(musicId)) {
+                msgbox.errorBox(langUtil.getTranslation('Code_MusicIDNotFound'));
+                return;
+            }
+
+            target_filename = getMusicNameByRule(musicId, rule, sourceName, targetDir);
+            if (target_filename === null) {
+                // Auto renaming processing is at callback of ipcRender
+                return;
+            }
+        } else {
+            msgbox.errorBox(langUtil.getTranslation('Code_MusicIDNotFoundOriginalNameUsed'));
+            target_filename = sourceName.substring(sourceName.lastIndexOf(path.sep) + 1, sourceName.lastIndexOf("."));
+        }
+
+    } else {
+        target_filename = $("#target_filename").val();
+    }
+    console.log("target_filename=" + target_filename);
+    if (target_filename === null || target_filename === undefined || target_filename.length === 0) {
+        msgbox.errorBox(langUtil.getTranslation('Code_EmptyTargetMusicName'));
+        return;
+    } else if (target_filename.includes(path.sep)) {
+        msgbox.errorBox(langUtil.getTranslation('Code_InvalidSymbolFound'));
+        return;
+    }
+    processSingleFile(sourceName, targetDir + (targetDir.endsWith(path.sep) ? '' : path.sep) + target_filename + ".mp3");
+
 }
 
 function sleep(ms) {

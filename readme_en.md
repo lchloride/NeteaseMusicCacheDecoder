@@ -10,7 +10,7 @@ This project is built by Nodejs together with Electron. MacOS and Linux system i
 
 ## Lastest version
 
-v3.3.0 primary version, updated at Feb. 3, 2020 China Standard Time
+v3.4.1 hotfix version, updated at Aug. 2, 2020 China Standard Time
 
 ## Installation
 
@@ -119,6 +119,10 @@ Supported meta data:
 - Solve the possible renaming conflict
 
 ## History
+
+### v3.4.1 
+
+- Fix: When decoding single file in batch scanning view, the target dir used is not the batched one.
 
 ### v3.4.0 Convert music you wanted in the directory
 

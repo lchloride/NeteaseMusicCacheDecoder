@@ -161,10 +161,9 @@ $("#start_single_process").click(startSingleProcess);
 function startSingleProcess(e, sourceName)
 {
     var targetDir = $("#target_dir").val();
-    var isTargetDirUsingCache = $("#btarget_dir_using_cache").is(":checked");
+    var isTargetDirUsingCache = $("#target_dir_using_cache").is(":checked");
     if (sourceName === undefined) {
         sourceName = $("#cache_file").val();
-        isTargetDirUsingCache = $("#target_dir_using_cache").is(":checked");
     }
     if (sourceName === undefined || sourceName === null || sourceName.length === 0) {
         msgbox.errorBox(langUtil.getTranslation('Code_InvalidFileName'));

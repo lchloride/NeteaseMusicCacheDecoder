@@ -1,23 +1,24 @@
 {
-    "version": "3.4.0",
+    "version": "3.4.1",
     "info": {
-        "zh_cn": "1. 新增功能：批量转换中可以扫描路径下的缓存文件，只转换需要的文件"
+        "zh_cn": "1. 修复：批量转换的扫描模式下，目标路径使用的不是批量页面上的路径。",
+        "en": "1. Fix: When decoding single file in batch scanning view, the target dir used is not the batched one."
     },
-    "level": "primary",
+    "level": "hotfix",
     "url": {
-        "win": "https://github.com/lchloride/NeteaseMusicCacheDecoder/releases/download/v3.4.0/NeteaseMusicCacheDecoder-3.4.0-win.zip",
-        "darwin": "https://github.com/lchloride/NeteaseMusicCacheDecoder/releases/download/v3.4.0/NeteaseMusicCacheDecoder-3.4.0-mac.zip",
-        "linux": "https://github.com/lchloride/NeteaseMusicCacheDecoder/releases/download/v3.4.0/NeteaseMusicCacheDecoder-3.4.0-mac.zip"
+        "win": "https://github.com/lchloride/NeteaseMusicCacheDecoder/releases/download/v3.4.1/NeteaseMusicCacheDecoder-3.4.1-win.zip",
+        "darwin": "https://github.com/lchloride/NeteaseMusicCacheDecoder/releases/download/v3.4.1/NeteaseMusicCacheDecoder-3.4.1-mac.zip",
+        "linux": "https://github.com/lchloride/NeteaseMusicCacheDecoder/releases/download/v3.4.1/NeteaseMusicCacheDecoder-3.4.1-mac.zip"
     },
     "md5": {
-        "win": "f5741e31ef8ff60c77471ef610461d8c",
-        "darwin": "0bb283c09b04411d6008e775520b17e7",
-        "linux": "0bb283c09b04411d6008e775520b17e7"
+        "win": "534fa4de709890281beddb8cc00b1b49",
+        "darwin": "57a330c3f4ea1370406de6218efeab58",
+        "linux": "57a330c3f4ea1370406de6218efeab58"
     },
     "default_name": {
-        "win": "NeteaseMusicCacheDecoder-3.4.0-win.zip",
-        "darwin": "NeteaseMusicCacheDecoder-3.4.0-mac.zip",
-        "linux": "NeteaseMusicCacheDecoder-3.4.0-mac.zip"
+        "win": "NeteaseMusicCacheDecoder-3.4.1-win.zip",
+        "darwin": "NeteaseMusicCacheDecoder-3.4.1-mac.zip",
+        "linux": "NeteaseMusicCacheDecoder-3.4.1-mac.zip"
     },
-    "release_date": "2020-02-10"
+    "release_date": "2020-08-02"
 }

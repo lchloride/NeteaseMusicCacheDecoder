@@ -1,6 +1,6 @@
 {
     "zh_cn": {
-        "Title": "网易云音乐缓存解码器 v3.4",
+        "Title": "网易云音乐缓存解码器 v3.4.1",
         "Menu_Batch": "批量处理",
         "Menu_Single": "单文件处理",
         "Menu_About": "关于",
@@ -93,7 +93,7 @@
         "Text_Scaning": "扫描中"
     },
     "en": {
-        "Title": "Netease Music Cache Decoder v3.4",
+        "Title": "Netease Music Cache Decoder v3.4.1",
         "Menu_Batch": "Batch Processing",
         "Menu_Single": "Single File",
         "Menu_About": "About",
